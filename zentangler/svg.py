@@ -22,9 +22,9 @@ class SVG:
 
     def get_polygon_path(self, polygon: Polygon) -> str:
         points = polygon.points
-        pathStr = 'M ' + str(points[0][0]) + ' ' + str(points[0][1])
+        pathStr = 'M ' + str(points[0].x) + ' ' + str(points[0].y)
         for i in range(1, len(points)):
-            pathStr += ' L ' + str(points[i][0]) + ' ' + str(points[i][1])
+            pathStr += ' L ' + str(points[i].x) + ' ' + str(points[i].y)
         pathStr += 'z'
         return pathStr
 
