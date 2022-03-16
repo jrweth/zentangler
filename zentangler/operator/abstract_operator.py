@@ -3,5 +3,5 @@ from zentangler.shape import Shape
 class AbstractOperator(ABC):
 
     @abstractmethod
-    def execute(self, shape: Shape) -> list:
+    def execute(self, shapes: list, output_tags) -> list:
         pass
