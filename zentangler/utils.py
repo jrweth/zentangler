@@ -1,22 +1,26 @@
 from point import Point
 
-# Given three collinear points p, q, r, the function checks if
-# point q lies on line segment 'pr'
 def on_segment(p: Point, q: Point, r: Point):
+    """
+    Given three collinear points p, q, r, the function checks if
+    point q lies on line segment 'pr'
+    """
     if ((q.x <= max(p.x, r.x)) and (q.x >= min(p.x, r.x)) and
             (q.y <= max(p.y, r.y)) and (q.y >= min(p.y, r.y))):
         return True
     return False
 
 def orientation(p: Point, q: Point, r: Point):
-    # to find the orientation of an ordered triplet (p,q,r)
-    # function returns the following values:
-    # 0 : Collinear points
-    # 1 : Clockwise points
-    # 2 : Counterclockwise
+    """
+    to find the orientation of an ordered triplet (p,q,r)
+    function returns the following values:
+    0 : Collinear points
+    1 : Clockwise points
+    2 : Counterclockwise
 
-    # See https://www.geeksforgeeks.org/orientation-3-ordered-points/amp/
-    # for details of below formula.
+    See https://www.geeksforgeeks.org/orientation-3-ordered-points/amp/
+    for details of below formula.
+    """
 
     val = (float(q.y - p.y) * (r.x - q.x)) - (float(q.x - p.x) * (r.y - q.y))
     if (val > 0):
@@ -32,9 +36,10 @@ def orientation(p: Point, q: Point, r: Point):
         # Collinear orientation
         return 0
 
-# The main function that returns true if
-# the line segment 'ab' and 'cd' intersect.
-def do_intersect(a: Point, b: Point, c: Point, d: Point):
+def do_intersect(a: Point, b: Point, c: Point, d: Point) -> bool:
+    """
+    Returns true if the line segment 'ab' and 'cd' intersect.
+    """
 
     # Find the 4 orientations required for
     # the general and special cases
@@ -68,9 +73,19 @@ def do_intersect(a: Point, b: Point, c: Point, d: Point):
     # If none of the cases
     return False
 
-def get_intersect(a: Point, b: Point, c: Point, d: Point):
+def get_intersect(a: Point, b: Point, c: Point, d: Point) -> Point:
     """
-    Get the intersection point between two points
+    Get the intersection point between two line segments
+    Parameters
+    ----------
+    a : Point
+        start point of first line segment ab
+    b: Point
+        end point of first line segment ab
+    c: Point
+        start point of second line segment cd
+    d: Point
+        end point of second line segment cd
     """
     if not do_intersect(a, b, c, d):
         return None

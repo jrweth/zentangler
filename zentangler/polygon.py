@@ -11,7 +11,18 @@ class Polygon:
     def __init__(self, points:  list = []):
         self.points = points
 
-    def get_intersection_indexes(self, start_point: Point, end_point: Point):
+    def get_intersection_indexes(self, start_point: Point, end_point: Point) -> list:
+        """
+        returns the indexes of the polygon points which start a line segment
+        which intersects with the provided line segment
+
+        Parameters
+        ----------
+        start_point: Point
+            the start paint of the line segment to test for intersections
+        end_point: Point
+            the end paint of the line segment to test for intersections
+        """
         intersections = []
         for i in range(len(self.points)):
             poly_point_1 = self.points[i]
