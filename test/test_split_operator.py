@@ -14,6 +14,9 @@ from zentangler.operator.operator_parameter import OperatorParameterValue
 
 class TestSplitOperator(unittest.TestCase):
     def test_square_simple(self):
+        """
+        test splitting the simple square
+        """
         shape: Shape = SQUARE_SHAPE.clone()
         param_values = [
             OperatorParameterValue("width", 0.1)
@@ -32,18 +35,39 @@ class TestSplitOperator(unittest.TestCase):
     def test_square_holes(self):
         shape: Shape = Shape(geometry=HOLED_POLYGON)
         param_values = [
-            OperatorParameterValue("width", 0.075)
+            OperatorParameterValue("width", 0.075),
+            OperatorParameterValue("angle", -30)
         ]
         splitOperator = SplitOperator(param_values)
 
         newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
-        self.assertEqual(len(newShapes), 12, "number of split shapes equal")
+        self.assertEqual(len(newShapes), 16, "number of split shapes equal")
         self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
         svg = SVG(SCRIPT_DIR + '/results/test-split-operator-holed.svg')
         for shape in newShapes:
             svg.add_shape(shape)
         svg.save_svg()
+
+
+    def test_cross(self):
+        shape: Shape = Shape(geometry=HOLED_POLYGON)
+        param_values = [
+            OperatorParameterValue("width", 0.2),
+            OperatorParameterValue("angle", 30),
+            OperatorParameterValue("cross_split", True)
+        ]
+        splitOperator = SplitOperator(param_values)
+
+        newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
+        self.assertEqual(len(newShapes), 27, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
+
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-cross.svg')
+        for shape in newShapes:
+            svg.add_shape(shape)
+        svg.save_svg()
+
 
 if __name__ == '__main__':
     unittest.main()

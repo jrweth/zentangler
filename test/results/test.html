@@ -3,17 +3,34 @@
     <style>
         img {
             border: 1px solid black;
-            width: 500px;
-            height: 500px;
+            width: 300px;
+            height: 300px;
+        }
+        .tests {
+            display: flex;
+            flex-flow: row wrap;
         }
     </style>
 </head>
 <body>
-<h2>SVG Test</h2>
-<img src="test-svg.svg">
-<h2>Split Operator Simple</h2>
-<img src="test-split-operator-simple.svg">
-<h2>Split Operator Holes</h2>
-<img src="test-split-operator-holed.svg">
+
+<div class="tests">
+    <div class="test">
+        <h2>SVG Test</h2>
+        <img src="test-svg.svg">
+    </div>
+    <div class="test">
+        <h2>Split Operator Simple</h2>
+        <img src="test-split-operator-simple.svg">
+    </div>
+    <div class="test">
+        <h2>Split Operator Holes</h2>
+        <img src="test-split-operator-holed.svg">
+    </div>
+    <div class="test">
+        <h2>Split Operator Cross</h2>
+        <img src="test-split-operator-cross.svg">
+    </div>
+</div>
 </body>
 </html>
