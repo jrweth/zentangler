@@ -1,2 +1,2 @@
 .idea
-/test/results/test-svg.svg
+/test/results/*.svg

@@ -2,7 +2,6 @@ import svgwrite
 from svgwrite import Drawing
 from svgwrite.path import Path
 from shape import Shape
-from polygon import Polygon
 
 class SVG:
     """
@@ -18,23 +17,23 @@ class SVG:
         """
 
         # add the outer polygon to the path
-        pathStr = self.get_polygon_path(shape.outer_polygon)
+        for poly in shape.geometry.geoms:
+            pathStr = self.get_polygon_path(poly.exterior.coords)
 
-        #loop through the inner polygon "holes" and add geometry to the path
-        for i in range(0, len(shape.inner_polygons)):
-            p = shape.inner_polygons[i]
-            pathStr += ' ' + self.get_polygon_path(p)
-        path = svgwrite.path.Path(d=pathStr, stroke="black", fill="blue", stroke_width=0.01, fill_rule="evenodd" )
-        self.dwg.add(path)
+            #loop through the inner polygon "holes" and add geometry to the path
+            for i in range(0, len(poly.interiors)):
+                points = poly.interiors[i].coords
+                pathStr += ' ' + self.get_polygon_path(points)
+            path = svgwrite.path.Path(d=pathStr, stroke="black", fill="blue", stroke_width=0.01, fill_rule="evenodd" )
+            self.dwg.add(path)
 
-    def get_polygon_path(self, polygon: Polygon) -> str:
+    def get_polygon_path(self, points: list) -> str:
         """
-        given a polygon, create the svg path that defines it
+        given a list of points, create the svg path that defines it
         """
-        points = polygon.points
-        pathStr = 'M ' + str(points[0].x) + ' ' + str(points[0].y)
+        pathStr = 'M ' + str(points[0][0]) + ' ' + str(points[0][1])
         for i in range(1, len(points)):
-            pathStr += ' L ' + str(points[i].x) + ' ' + str(points[i].y)
+            pathStr += ' L ' + str(points[i][0]) + ' ' + str(points[i][1])
         pathStr += 'z'
         return pathStr
 
