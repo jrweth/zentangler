@@ -1,2 +1,3 @@
 .idea
 /test/results/*.svg
+/test/results/*.png
