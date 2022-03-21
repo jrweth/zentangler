@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from zentangler.shape import Shape
 from zentangler.operator.operator_parameter import OperatorParameter, OperatorParameterValue
+
+
 class AbstractOperator(ABC):
     """
     Abstract class representing operators that can be applied to shapes

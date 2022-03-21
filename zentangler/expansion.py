@@ -1,5 +1,6 @@
 from zentangler.shape import Shape
 
+
 class Expansion:
     """
     Expansion class that holds the state of tangle at a point in process of expansion

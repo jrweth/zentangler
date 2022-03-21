@@ -1,5 +1,6 @@
 #from zentangler.operator import AbstractOperator   ??: cannot use an abstract class
 
+
 class Rule:
     """
     Rule class that holds details of a rule in a grammar

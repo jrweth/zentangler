@@ -1,0 +1,28 @@
+{
+	"grammar_name" : "Test Grammar 1", 
+	"seed" : -1,
+	"rules" : [
+		{ 
+			"rule_name" : "rule_1",
+			"matching_tags" : [],
+			"group_id" : 0,
+			"produced_tags" : ["a"],
+			"operator" : "outline",
+			"parameters" : {
+				"width" : 10,
+				"angle" : 45,
+			}
+		}, 
+
+		{ 	
+			"rule_name" : "rule_2",
+			"matching_tags" : ["l_s", "l_c"],
+			"group_id" : 0,
+			"produced_tags" : ["t7"],
+			"operator" : "split",
+			"parameters" : {
+				"offset": 10,
+			}
+		}
+	]
+}
