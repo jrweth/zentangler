@@ -12,8 +12,8 @@ def getUvVertexId(obj, uvId):
         the MeshVertex index associated with the uv
       
     Paramters:
-        obj: pymel.core.Node
-           python node object representing the 3D shape
+        obj: pymel.core.general.PyNode
+           python node object repesenting the 3D shape
         uvId:
             the MeshUV index
     """
@@ -24,6 +24,23 @@ def getUvVertexId(obj, uvId):
             if i == uvId:
                 return vert.index()
 
+
+def getUvVertexMap(obj):
+    """
+    get a UV to Vertex Map for an object
+    
+    Parameters:
+        obj: pymel.core.general.PyNode
+            the maya object holding the geometry
+            
+    return:  dict[uvId] => vertexId
+    """
+    vtxMap = {}
+    for uvId in range(len(obj.getUvShellsIds()[0])):
+        vtxMap[uvId] = getUvVertexId(obj, uvId)
+
+    return vtxMap
+    
 def getUvIndexInUvShellBorder(obj, shellIndex):
     """
     Get the UV indices that are in the UV Shell border
@@ -32,7 +49,7 @@ def getUvIndexInUvShellBorder(obj, shellIndex):
         set of UV indices that make up the shell border edge
     
     Parameters:
-        obj: pymel.core.Node
+        obj: pymel.core.general.PyNode
            python node object representing the 3D shape
         shellIndex:
             the uv shell index
@@ -62,7 +79,7 @@ def getVertIndexInUvShellBorder(obj, shellIndex):
         set of MeshEdge indices that make up the shell border edge
     
     Parameters:
-        obj: pymel.core.Node
+        obj: pymel.core.general.PyNode
            python node object representing the 3D shape
         shellIndex:
             the uv shell index
@@ -90,7 +107,7 @@ def getEdgeIndexInUvShellBorder(obj, shellIndex):
         set of MeshEdge indices that make up the shell border edge
         
     Parameters:
-        obj: pymel.core.Node
+        obj: pymel.core.general.PyNode
            python node object representing the 3D shape
         shellIndex:
             the uv shell index
@@ -126,7 +143,7 @@ def getEdgeVertexIds(obj, edgeId):
         tuple containing the two points defining the line
         
     Parameters:
-       obj: pymel.core.Node
+       obj: pymel.core.general.PyNode
            python node object representing the 3D shape
        edgeId: int
            index of the MeshEdge in the object
@@ -136,12 +153,32 @@ def getEdgeVertexIds(obj, edgeId):
         obj.e[edgeId].connectedVertices()[1].index()
     }
     
-def uvsShareBorderEdge(obj, uvId1, uvId2, borderEdgeIds):
+    
+def getEdgeVertexMap(obj, edgeIds):
+    """
+    create a map for looking up the vertices for the set of edges
+    
+    return: map[edgeId] -> set(edgeVerticies)
+    
+    Paramteters:
+        obj: pymel.core.general.PyNode
+            python node object representing the 3D shape
+        edgeIds:
+            indexes for the edges to perform the map for 
+    """
+    vtxMap = {}
+    for edgeId in edgeIds:
+        vtxMap[edgeId] = getEdgeVertexIds(obj, edgeId)
+
+    return vtxMap
+      
+
+def uvsShareBorderEdge(obj, uvId1, uvId2, borderEdgeIds, uvVertexMap, edgeVertexMap):
     """
     Check if two UVs are connected via a shell border edge
     
     Parameters:
-        obj: Node
+        obj: pymel.core.general.PyNode
             the Node object containing the geometry
         uvId1: int
             the index of the uv to check
@@ -151,36 +188,37 @@ def uvsShareBorderEdge(obj, uvId1, uvId2, borderEdgeIds):
             ids of the MeshEdge which are in the uv shell border
         
     """
-    vtxId1 = getUvVertexId(obj, uvId1)
-    vtxId2 = getUvVertexId(obj, uvId2)
+    vtxId1 = uvVertexMap[uvId1]
+    vtxId2 = uvVertexMap[uvId2]
     
     uvVertices = {vtxId1, vtxId2}
     
     # loop through border edges and make sure there is a border edge that contains both vertices
     for edgeId in borderEdgeIds:
-        edgeVertices = getEdgeVertexIds(obj, edgeId)
+        edgeVertices = edgeVertexMap[edgeId]
         if len(uvVertices.difference(edgeVertices)) == 0: 
             return True
     return False
 
       
 def getBorderShellPolygons(obj, shellUvIds, borderEdgeIds):
-   """
-   take all the uvs in a shell border and order them so that that trace the outline of the polygons (both outer and inner "hole" polygons)
+    """
+    take all the uvs in a shell border and order them so that that trace the outline of the polygons (both outer and inner "hole" polygons)
    
-   return: list[list[int]]
-       list of polygons and their ordererd uv_ids (e.g. [ [0,1,3,2], [4,5,7,6] ] ) 
+    return: list[list[int]]
+        list of polygons and their ordererd uv_ids (e.g. [ [0,1,3,2], [4,5,7,6] ] )
    
-   Parameters:
-       obj: pymell.cored.node
-           python node object representing the 3D shape
-       shellUvIds: int[]
-           list of UV indices in the uv shell border polygon
-       borderEdgeIds: int[]
-           list of MeshEdge indices that define the border of the UV shell
-   """
+    Parameters:
+        obj: pymel.core.general.PyNode
+            python node object representing the 3D shape
+        shellUvIds: int[]
+            list of UV indices in the uv shell border polygon
+        borderEdgeIds: int[]
+            list of MeshEdge indices that define the border of the UV shell
+    """
 
-   
+    uvVertexMap = getUvVertexMap(obj)
+    edgeVertexMap = getEdgeVertexMap(obj, borderEdgeIds)
     remaining = shellUvIds.copy()
     currUvId = remaining.pop()
     currPolygonId = 0
@@ -190,7 +228,7 @@ def getBorderShellPolygons(obj, shellUvIds, borderEdgeIds):
         # loop through the uvIds and find connecting ones
         uvIdsConnected = set()
         for uvId in remaining:
-            if uvsShareBorderEdge(obj, currUvId, uvId, borderEdgeIds):
+            if uvsShareBorderEdge(obj, currUvId, uvId, borderEdgeIds, uvVertexMap, edgeVertexMap):
                 uvIdsConnected.add(uvId)
         # if no uvs added start another polygon
         if len(uvIdsConnected) == 0:    
@@ -223,8 +261,7 @@ def getBorderShellPolygons(obj, shellUvIds, borderEdgeIds):
 
 
 
-#test for running on a stock cylinder
-pm.select("pCylinder1")
+#test for running on selected object
 obj = pm.ls(selection=True)[0]
 
 for shellIndex in range(obj.getUvShellsIds()[1]):
