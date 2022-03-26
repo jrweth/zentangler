@@ -1,4 +1,4 @@
-from shapely.geometry import Polygon
+from shapely.geometry import MultiPolygon
 import copy
 
 class Shape:
@@ -8,7 +8,7 @@ class Shape:
             tag: str = "origin",
             group_id: int = 0,
             shape_id: int = 0,
-            geometry: Polygon = None,
+            geometry: MultiPolygon = None,
             shape_attributes: list = [],
             parent_shape = None
     ):
