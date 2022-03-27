@@ -7,10 +7,10 @@
 			"matching_tags" : [],
 			"group_id" : 0,
 			"produced_tags" : ["a"],
-			"operator" : "outline",
+			"operator" : "split",
 			"parameters" : {
 				"width" : 10,
-				"angle" : 45,
+				"angle" : 45
 			}
 		}, 
 
@@ -19,9 +19,9 @@
 			"matching_tags" : ["l_s", "l_c"],
 			"group_id" : 0,
 			"produced_tags" : ["t7"],
-			"operator" : "split",
+			"operator" : "outline",
 			"parameters" : {
-				"offset": 10,
+				"offset": 10
 			}
 		}
 	]

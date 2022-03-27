@@ -8,7 +8,7 @@ class Expansion:
         The shapes in a tangle at a particular expansion are the shapes in added & remainder
     """
 
-    def __init__(self, matched, added, remainder, rule_applied):    # ??: include rule applied
+    def __init__(self, matched: list, added: list, remainder: list): #, rule_applied):    # ??: include rule applied
         """
         initialize an expansion
 
@@ -20,3 +20,11 @@ class Expansion:
         self.matched = matched
         self.added = added
         self.remainder = remainder
+
+        self.shapes = []
+        for m in matched:
+            self.shapes.append(m)
+        for a in added:
+            self.shapes.append(a)
+        for r in remainder:
+            self.shapes.append(r)

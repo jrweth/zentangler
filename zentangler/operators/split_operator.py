@@ -2,8 +2,8 @@ from math import cos, sin
 
 import shapely.geometry
 
-from zentangler.operator.abstract_operator import AbstractOperator
-from zentangler.operator.operator_parameter import OperatorParameter, ParameterDataType, OperatorParameterValue
+from zentangler.operators.abstract_operator import AbstractOperator
+from zentangler.operators.operator_parameter import OperatorParameter, ParameterDataType, OperatorParameterValue
 from zentangler.shape import Shape
 from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
 from shapely import affinity
@@ -14,9 +14,9 @@ class SplitOperator(AbstractOperator):
 
     Attributes:
         num_output_tags: int
-            number of outputs tags this operator will produce
+            number of outputs tags this operators will produce
         parameters: list[OperatorParameter]
-            list of parameters that define the operator
+            list of parameters that define the operators
 
     """
 
