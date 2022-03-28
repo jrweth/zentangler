@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from zentangler.shape import Shape
-from zentangler.operator.operator_parameter import OperatorParameter, OperatorParameterValue
+from zentangler.operators.operator_parameter import OperatorParameter, OperatorParameterValue
+
+
 class AbstractOperator(ABC):
     """
     Abstract class representing operators that can be applied to shapes
@@ -8,18 +10,18 @@ class AbstractOperator(ABC):
     Attributes
     ----------
         parameters: list[OperatorParameter]
-            list of operator parameters required to configure this operator
+            list of operators parameters required to configure this operators
     """
     parameters: list
 
     def __init__(self, parameterValues: list):
         """
-        initialize the operator
+        initialize the operators
 
         Parameters
         ----------
             parameterValues: list[ParameterValue]
-                list of parameter values to instantiate the operator
+                list of parameter values to instantiate the operators
         """
         self.parameterValues = parameterValues
         self.new_shapes = []
@@ -54,6 +56,6 @@ class AbstractOperator(ABC):
         # return None if nothing found
         return None
 
-    @abstractmethod
+    #@abstractmethod
     def execute(self, shapes: list, output_tags) -> list:
         pass

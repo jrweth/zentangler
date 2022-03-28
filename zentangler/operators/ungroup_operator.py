@@ -1,4 +1,4 @@
-from abstract_operator import AbstractOperator
+from zentangler.operators.abstract_operator import AbstractOperator
 
 class UngroupOperator(AbstractOperator):
 

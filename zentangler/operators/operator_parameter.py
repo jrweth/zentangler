@@ -10,12 +10,12 @@ class ParameterDataType(Enum):
 
 class OperatorParameter:
     """
-    Class representing a parameter to be passed to an operator
+    Class representing a parameter to be passed to an operators
     """
 
     def __init__(self, name: str, data_type: ParameterDataType, default, description: str):
         """
-        initializer for the operator parameter
+        initializer for the operators parameter
 
         Parameters:
             name: str
