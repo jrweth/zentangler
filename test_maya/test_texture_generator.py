@@ -7,21 +7,26 @@ sys.path.append('/Users/wetherbe-admin/personal/projects/zentangler/zentangler')
 
 from zentangler_maya.uv_shape_generator import UVShapeGenerator
 from zentangler_maya.texture_generator import TextureGenerator
-from zentangler.operator.split_operator import SplitOperator
-from zentangler.operator.operator_parameter import OperatorParameterValue as OPV
+from zentangler.operators.split_operator import SplitOperator
+from zentangler.operators.operator_parameter import OperatorParameterValue as OPV
+from zentangler.shape import Shape
+from shapely.geometry import Polygon, MultiPolygon
 
-#create a poly torus
-pm.polyTorus()
-obj = pm.ls(selection=True)[0]
+#create a pol torus
+# pm.polyTorus()
+# pm.select("pCube1")
+obj =pm.ls(selection=True)[0]
 
 # get the shape from the uvs
 generator = UVShapeGenerator(obj)
-shape = generator.get_shape()
+shape = generator.get_shape_poly_union()
+
+print ("got combined")
 
 # run the split operator on the shape
 split = SplitOperator([
-    OPV(name="cross_split", value="true"),
-    OPV(name="angle", value=85)
+    OPV(name="cross_split", value=True),
+    OPV(name="angle", value=34)
 ])
 shapes = split.execute([shape], ["splits"])
 

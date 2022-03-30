@@ -17,6 +17,7 @@ class UVShapeGenerator():
             object: test_maya.core.general.PyNode
         """
         self.obj = object
+        self.uv_adjacent_map = {}
 
     def get_uv_vertex_id(self, uvId):
         """
@@ -53,6 +54,37 @@ class UVShapeGenerator():
             for uvId in self.obj.vtx[vId].getUVIndices():
                 vtxMap[uvId] = vId
         return vtxMap
+
+    def get_uv_adjacent_map(self):
+
+        # if we've already done the map don't do it again
+        if len(self.uv_adjacent_map) > 0:
+            return self.uv_adjacent_map
+
+        self.uv_adjacent_map = {}
+        self.uv_face_map = {}
+        for f in self.obj.f:
+            for v_index in range(f.numVertices()):
+                uv_id_1 = f.getUVIndex(v_index)
+
+                # if we are at the last vertex connect it back to the first
+                if v_index == f.numVertices() - 1:
+                    uv_id_2 = f.getUVIndex(0)
+                else:
+                    uv_id_2 = f.getUVIndex(v_index + 1)
+
+                # add uvid2 to uvid1s adjacent list
+                if not uv_id_1 in self.uv_adjacent_map:
+                    self.uv_adjacent_map[uv_id_1] = {uv_id_2}
+                else:
+                    self.uv_adjacent_map[uv_id_1].add(uv_id_2)
+
+                # add uvid1 to uvid2 adjacent list
+                if not uv_id_2 in self.uv_adjacent_map:
+                    self.uv_adjacent_map[uv_id_2] = {uv_id_1}
+                else:
+                    self.uv_adjacent_map[uv_id_2].add(uv_id_1)
+        return self.uv_adjacent_map
 
     def get_uv_indices_in_uv_shell_border(self, shellIndex):
         """
@@ -229,6 +261,7 @@ class UVShapeGenerator():
         """
 
         uvVertexMap = self.get_uv_vertex_map()
+        uv_adjacent_map = self.get_uv_adjacent_map()
         edgeVertexMap = self.get_edge_vertex_map(borderEdgeIds)
         remaining = shellUvIds.copy()
         currUvId = remaining.pop()
@@ -238,9 +271,10 @@ class UVShapeGenerator():
         while len(remaining) > 0:
             # loop through the uvIds and find connecting ones
             uvIdsConnected = set()
-            for uvId in remaining:
-                if self.uvs_share_border_edge(currUvId, uvId, borderEdgeIds, uvVertexMap, edgeVertexMap):
-                    uvIdsConnected.add(uvId)
+            for uvId in uv_adjacent_map[currUvId]:
+                if uvId in remaining:
+                    if self.uvs_share_border_edge(currUvId, uvId, borderEdgeIds, uvVertexMap, edgeVertexMap) and  1 == 1:
+                        uvIdsConnected.add(uvId)
             # if no uvs added start another polygon
             if len(uvIdsConnected) == 0:
                 currUvId = remaining.pop()
@@ -253,6 +287,7 @@ class UVShapeGenerator():
                 remaining.difference_update({currUvId})
             # more than one connection found - get the closest one
             else:
+                print ("more than one")
                 minDist = 100
                 minId = -1
                 currUv = self.obj.getUV(currUvId)
@@ -268,7 +303,13 @@ class UVShapeGenerator():
                 polygons[currPolygonId].append(minId)
                 remaining.difference_update({minId})
 
-        return polygons
+        good_polygons = []
+        for p in polygons:
+            if (len(p) > 2):
+                good_polygons.append(p)
+            else:
+                pr
+        return good_polygons
 
     def get_outer_polygon_index(self, obj, polygons):
         """
@@ -333,7 +374,6 @@ class UVShapeGenerator():
                 holes.append(self.uvs_to_points(borderShellPolygons[i]))
 
         return Polygon(outerShell, holes)
-
     def get_shape(self):
         """
         get the shapely shape representing all the separate polygon shells found in the UV mapping
@@ -350,3 +390,26 @@ class UVShapeGenerator():
 
         # return the combined shape of all the polygons shells found
         return Shape(geometry=MultiPolygon(polygons))
+
+    def get_shape_poly_union(self):
+        """
+        use shapely to combine all the uv polygons into 1 uv polygon
+        """
+
+        # get all of the uv polygons from each face
+        polygons = []
+        for face in self.obj.f:
+            uvs = face.getUVs()
+            points = []
+
+            for i in range(len(uvs[0])):
+                points.append((uvs[0][i], uvs[1][i]))
+            polygons.append(Polygon(points, []))
+
+        #use shapely to combine the uv polygons
+        combined = polygons[0]
+        for i in range(1, len(polygons)):
+            combined = combined.union(polygons[i])
+
+        # multiPolygon = MultiPolygon([combined])
+        return Shape(geometry=combined)
