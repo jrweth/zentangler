@@ -14,6 +14,12 @@ SQUARE_POLYGON: MultiPolygon = MultiPolygon([
     [[(0.1, 0.1), (0.9, 0.1), (0.9, 0.9), (0.1, 0.9)], []]
 ])
 
+HOLE_POLYGON: MultiPolygon = MultiPolygon([
+    [[(0.1, 0.1), (0.9, 0.1), (0.9, 0.9), (0.1, 0.9)], [
+        [(0.35, 0.35), (0.65, 0.35), (0.65, 0.65), (0.35, 0.65)]
+    ]]
+])
+
 #a polygon with some holes
 HOLED_POLYGON: MultiPolygon = MultiPolygon([
     [[(0.1, 0.1), (0.9, 0.1), (0.9, 0.9), (0.1, 0.9)], [

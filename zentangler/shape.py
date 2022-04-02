@@ -10,7 +10,10 @@ class Shape:
             shape_id: int = 0,
             geometry: MultiPolygon = None,
             shape_attributes: list = [],
-            parent_shape = None
+            parent_shape = None,
+            stroke_width: float = 0.01,
+            stroke_color: str = "#000000",
+            fill_color: str = "#CCCCCC"
     ):
         """
         initializer for a shape class instance
@@ -30,6 +33,12 @@ class Shape:
             List of shape attributes
         parent_shape: Shape
             Direct ancestor shape which created this shape (null for origin shapes)
+        stroke_width: float
+            width of the stroke to draw the shape
+        stroke_color: str
+            color of the stroke (svg colors e.g. #FFFFFF or white)
+        fill_color: str
+            color of the fill (svg colors e.g. #FFFFFF or white)
         """
         self.tag = tag
         self.group_id = group_id
@@ -37,6 +46,9 @@ class Shape:
         self.geometry: MultiPolygon = geometry
         self.shape_attributes = shape_attributes
         self.parent_shape = parent_shape
+        self.fill_color = fill_color
+        self.stroke_width = stroke_width
+        self.stroke_color = stroke_color
 
     def clone(self):
         """
