@@ -1,0 +1,38 @@
+{
+	"grammar_name" : "Test Grammar 1", 
+	"seed" : -1,
+	"rules" : [
+		{ 
+			"rule_name" : "rule_1",
+			"matching_tags" : ["origin"],
+			"group_id" : 0,
+			"output_tags" : ["a"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.1,
+				"cross_split" : true
+			}
+		}, 
+		{ 
+			"rule_name" : "rule_2",
+			"matching_tags" : ["a"],
+			"group_id" : 0,
+			"output_tags" : ["b", "c"],
+			"operator" : "regroup",
+			"parameters" : {
+				"k" : 2
+			}
+		}, 
+		{ 
+			"rule_name" : "rule_3",
+			"matching_tags" : ["c"],
+			"group_id" : 0,
+			"output_tags" : ["d"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.02,
+				"angle" : 45
+			}
+		}
+	]
+}

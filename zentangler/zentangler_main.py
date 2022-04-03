@@ -1,17 +1,24 @@
+import sys
+import os
+os.system("export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib")
+
 from zentangler.tangle import Tangle
 from zentangler.grammar import Grammar
 from zentangler.shape import Shape
 from shapely.geometry import MultiPolygon
 from zentangler.svg import SVG
-import os
-
+from zentangler.grammar_manager import GrammarManager
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-grammar_filepath = SCRIPT_DIR + "/grammars/test_grammar_1.json"
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 
 def main():
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    grammar_filepath = SCRIPT_DIR + "/grammars/test_grammar_1.json"
+
+    grammarManager = GrammarManager()
     # parse grammar & rules
-    grammar = Grammar.get_grammar(grammar_filepath)
+    grammar = grammarManager.get_grammar(grammar_filepath)
 
     initial_shapes = [Shape(
         tag="origin",
@@ -37,3 +44,6 @@ def main():
     # convert SVG to PNG
 
     return 1
+
+
+main()

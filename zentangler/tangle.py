@@ -32,7 +32,8 @@ class Tangle:
         # self.shapes = init_shapes
 
         # save starting shapes
-        self.history.append(Expansion(self.all_shapes, None, None))
+        self.history = []
+        self.history.append(Expansion(None, self.all_shapes, None))
 
         step = 0
         while self.expand():
@@ -41,14 +42,17 @@ class Tangle:
 
         print("Ending tangle")
 
+        return self.history[-1].getShapesForNewExpansion()
+
     def expand(self):
 
         # get last expansion
-        last_expansion = self.history[-1]
-        active_shapes = last_expansion.shapes
+        last_expansion: Expansion = self.history[-1]
+        active_shapes = last_expansion.getShapesForNewExpansion()
 
         # find matching rule and shapes
-        expansion_step = ExpansionManager.match(active_shapes, self.grammar)
+        expansion_step = ExpansionManager(Expansion(None, None, None))
+        expansion_step = expansion_step.match(active_shapes, self.grammar)
 
         if expansion_step.matched_rule is None:
             return False
@@ -58,6 +62,7 @@ class Tangle:
         expansion_step.expansion.added = matched_operator.execute(expansion_step.expansion.matched,
                                                                   expansion_step.matched_rule.output_tags)
 
+        expansion_step.expansion.appendAllShapes()
         # append expansion to history
         self.history.append(expansion_step.expansion)
 
