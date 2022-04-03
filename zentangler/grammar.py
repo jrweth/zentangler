@@ -1,4 +1,4 @@
-from zentangler.operators.ungroup_operator import UngroupOperator
+from zentangler.operators.grouping_operator import UngroupOperator
 
 from zentangler.rule import Rule
 
