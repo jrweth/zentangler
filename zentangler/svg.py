@@ -17,7 +17,6 @@ class SVG:
         """
         function to add a zentangle shape to the svg
         """
-
         # add the outer polygon to the path
         for poly in shape.geometry.geoms:
             pathStr = self.get_polygon_path(poly.exterior.coords)
@@ -26,7 +25,7 @@ class SVG:
             for i in range(0, len(poly.interiors)):
                 points = poly.interiors[i].coords
                 pathStr += ' ' + self.get_polygon_path(points)
-            path = svgwrite.path.Path(d=pathStr, stroke="black", fill="blue", stroke_width=0.01, fill_rule="evenodd" )
+            path = svgwrite.path.Path(d=pathStr, stroke=shape.stroke_color, fill=shape.fill_color, stroke_width=shape.stroke_width, fill_rule="evenodd" )
             self.dwg.add(path)
 
     def get_polygon_path(self, points: list) -> str:

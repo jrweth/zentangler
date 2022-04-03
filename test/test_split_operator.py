@@ -27,7 +27,7 @@ class TestSplitOperator(unittest.TestCase):
         self.assertEqual(len(newShapes), 9, "number of split shapes equal")
         self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
-        svg = SVG(SCRIPT_DIR + '/results/test-split-operators-simple.svg')
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-simple.svg')
         for shape in newShapes:
             svg.add_shape(shape)
         svg.save_svg()
@@ -44,7 +44,7 @@ class TestSplitOperator(unittest.TestCase):
         self.assertEqual(len(newShapes), 16, "number of split shapes equal")
         self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
-        svg = SVG(SCRIPT_DIR + '/results/test-split-operators-holed.svg')
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-holed.svg')
         for shape in newShapes:
             svg.add_shape(shape)
         svg.save_svg()
@@ -63,7 +63,7 @@ class TestSplitOperator(unittest.TestCase):
         self.assertEqual(len(newShapes), 27, "number of split shapes equal")
         self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
-        svg = SVG(SCRIPT_DIR + '/results/test-split-operators-cross.svg')
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-cross.svg')
         for shape in newShapes:
             svg.add_shape(shape)
         svg.save_svg()
