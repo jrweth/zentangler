@@ -1,6 +1,7 @@
 from zentangler.shape import Shape
 from zentangler.rule import Rule
 from zentangler.expansion import Expansion
+from zentangler.grammar import Grammar
 
 
 class ExpansionManager:
@@ -9,34 +10,34 @@ class ExpansionManager:
     """
     matched_rule: Rule
     expansion: Expansion
+    grammar: Grammar
 
-    def __init__(self, grammar):
+    def __init__(self, expansion: Expansion):
         """
         initialize a tangle
-
-        Parameters:
-            shapes: initial set of shapes
-            grammar: the grammar to be used to create tangle
         """
-        self.grammar = grammar
+        self.expansion = expansion
 
     def match(self, active_shapes, grammar):
         self.grammar = grammar
+        # self.expansion = Expansion(None, None, None)
+        self.matched_rule = None    # default value
 
         # get matching random rule
         matched_shape = Shape()
         for shape in active_shapes:
-            self.match_rule(shape)
             matched_shape = shape
+            if self.match_rule(shape):
+                break
 
         # get shapes to apply rule on
         for shape in active_shapes:
             if shape.group_id == matched_shape.group_id:  # ??: match with just gid or with tag also
-                self.expansion.matched.append(shape)
+                self.expansion.addToMatched(shape)
             else:
-                self.expansion.remainder.append(shape)
+                self.expansion.addToRemainder(shape)
 
-        return Expansion(self.expansion.matched, self.expansion.added, self.expansion.remainder)
+        return self
 
     def match_rule(self, shape):
         matched_rules = []
@@ -47,8 +48,9 @@ class ExpansionManager:
 
         if matched_rules:
             self.matched_rule = matched_rules[0]  # todo: randomize rule returned
+            return True
         else:
-            self.matched_rule = None    # ??: not sure how to handle
+            return False
 
     def tag_in_rule(self, tag, tags: list) -> bool:
         for t in tags:

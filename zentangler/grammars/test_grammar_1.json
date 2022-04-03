@@ -4,24 +4,24 @@
 	"rules" : [
 		{ 
 			"rule_name" : "rule_1",
-			"matching_tags" : [],
+			"matching_tags" : ["origin", "b"],
 			"group_id" : 0,
-			"produced_tags" : ["a"],
+			"output_tags" : ["a"],
 			"operator" : "split",
 			"parameters" : {
 				"width" : 10,
 				"angle" : 45
 			}
 		}, 
-
-		{ 	
-			"rule_name" : "rule_2",
-			"matching_tags" : ["l_s", "l_c"],
+		{ 
+			"rule_name" : "rule_1",
+			"matching_tags" : ["a"],
 			"group_id" : 0,
-			"produced_tags" : ["t7"],
-			"operator" : "outline",
+			"output_tags" : ["b"],
+			"operator" : "split",
 			"parameters" : {
-				"offset": 10
+				"width" : 15,
+				"angle" : 90
 			}
 		}
 	]
