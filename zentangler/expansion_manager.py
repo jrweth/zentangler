@@ -32,7 +32,7 @@ class ExpansionManager:
 
         # get shapes to apply rule on
         for shape in active_shapes:
-            if shape.group_id == matched_shape.group_id:  # ??: match with just gid or with tag also
+            if shape.group_id == matched_shape.group_id and shape.tag == matched_shape.tag:  # ??: match with just gid or with tag also
                 self.expansion.addToMatched(shape)
             else:
                 self.expansion.addToRemainder(shape)

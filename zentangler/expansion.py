@@ -61,3 +61,16 @@ class Expansion:
     def addToRemainder(self, shape: Shape):
         self.remainder.append(shape)
         self.shapes.append(shape)
+
+    def getShapesForNewExpansion(self):
+        shapes = []
+
+        if self.added is not None:
+            for a in self.added:
+                shapes.append(a)
+
+        if self.remainder is not None:
+            for r in self.remainder:
+                shapes.append(r)
+
+        return shapes

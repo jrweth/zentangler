@@ -3,6 +3,8 @@ from zentangler.rule import Rule
 from zentangler.operators.abstract_operator import AbstractOperator
 from zentangler.operators.split_operator import SplitOperator
 from zentangler.operators.operator_parameter import OperatorParameterValue
+from zentangler.operators.grouping_operator import RegroupOperator
+from zentangler.operators.grouping_operator import UngroupOperator
 import json
 
 class GrammarManager:
@@ -62,12 +64,18 @@ class GrammarManager:
     def get_operator(self, operator_name, parameters: dict):
         operator = None
 
+        param_values = []
+        for p in parameters:
+            param_values.append(OperatorParameterValue(p, parameters[p]))
+
         # todo: add more operators
         if operator_name == "split":
-            param_values = [
-                OperatorParameterValue("width", parameters["width"]),
-                OperatorParameterValue("angle", parameters["angle"])
-            ]
             operator = SplitOperator(param_values)
+
+        if operator_name == "ungroup":
+            operator = UngroupOperator(param_values)
+
+        if operator_name == "regroup":
+            operator = RegroupOperator(param_values)
 
         return operator

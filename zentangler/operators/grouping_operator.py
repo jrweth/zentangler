@@ -4,12 +4,12 @@ from zentangler.operators.operator_parameter import OperatorParameter, Parameter
 
 class UngroupOperator(AbstractOperator):
 
-    def execute(self, shapes: list, output_tag: str) -> list:
+    def execute(self, shapes: list, output_tags: list) -> list:
         gid = 0
 
         for shape in shapes:
             shape.group_id = gid
-            shape.tag = output_tag
+            shape.tag = output_tags[0]
 
             self.new_shapes.append(shape)
             gid += 1
@@ -24,12 +24,12 @@ class RegroupOperator(AbstractOperator):
                           description="number of groups"),
     ]
 
-    def execute(self, shapes: list, output_tag: str) -> list:
+    def execute(self, shapes: list, output_tags: list) -> list:
         k = self.get_parameter_value("k")
 
         for shape in shapes:
             shape.group_id = shape.shape_id % k
-            shape.tag = output_tag
+            shape.tag = output_tags[shape.shape_id % k]
 
             self.new_shapes.append(shape)
 
