@@ -19,7 +19,7 @@ obj =pm.ls(selection=True)[0]
 
 # get the shape from the uvs
 generator = UVShapeGenerator(obj)
-shape = generator.get_shape_poly_union()
+shape = generator.get_silhouette_poly()
 
 print ("got combined")
 
