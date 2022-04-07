@@ -24,13 +24,14 @@ class TestSplitOperator(unittest.TestCase):
         splitOperator = SplitOperator(param_values)
 
         newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
-        self.assertEqual(len(newShapes), 9, "number of split shapes equal")
-        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
         svg = SVG(SCRIPT_DIR + '/results/test-split-operator-simple.svg')
         for shape in newShapes:
             svg.add_shape(shape)
         svg.save_svg()
+
+        self.assertEqual(len(newShapes), 9, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
     def test_square_holes(self):
         shape: Shape = Shape(geometry=HOLED_POLYGON)
@@ -41,13 +42,14 @@ class TestSplitOperator(unittest.TestCase):
         splitOperator = SplitOperator(param_values)
 
         newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
-        self.assertEqual(len(newShapes), 16, "number of split shapes equal")
-        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
         svg = SVG(SCRIPT_DIR + '/results/test-split-operator-holed.svg')
         for shape in newShapes:
             svg.add_shape(shape)
         svg.save_svg()
+
+        self.assertEqual(len(newShapes), 16, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
 
     def test_cross(self):
@@ -60,14 +62,118 @@ class TestSplitOperator(unittest.TestCase):
         splitOperator = SplitOperator(param_values)
 
         newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
-        self.assertEqual(len(newShapes), 27, "number of split shapes equal")
-        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
         svg = SVG(SCRIPT_DIR + '/results/test-split-operator-cross.svg')
         for shape in newShapes:
             svg.add_shape(shape)
         svg.save_svg()
 
+        self.assertEqual(len(newShapes), 27, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
+
+    def test_jagged(self):
+        shape: Shape = Shape(geometry=HOLED_POLYGON)
+        param_values = [
+            OperatorParameterValue("width", 0.1),
+            OperatorParameterValue("line_style", "JAGGED"),
+            OperatorParameterValue("line_style_scale_x", .3),
+            OperatorParameterValue("line_style_scale_y", .5),
+        ]
+        splitOperator = SplitOperator(param_values)
+
+        newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
+
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-jagged.svg')
+        for shape in newShapes:
+            svg.add_shape(shape)
+        svg.save_svg()
+
+        self.assertEqual(len(newShapes), 12, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
+
+    def test_stepped(self):
+        shape: Shape = Shape(geometry=HOLED_POLYGON)
+        param_values = [
+            OperatorParameterValue("width", 0.1),
+            OperatorParameterValue("line_style", "STEPPED"),
+            OperatorParameterValue("line_style_scale_x", .1),
+            OperatorParameterValue("line_style_scale_y", .1),
+        ]
+        splitOperator = SplitOperator(param_values)
+
+        newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
+
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-stepped.svg')
+        for shape in newShapes:
+            svg.add_shape(shape)
+        svg.save_svg()
+
+        self.assertEqual(len(newShapes), 9, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
+
+
+    def test_curved(self):
+        shape: Shape = Shape(geometry=HOLED_POLYGON)
+        param_values = [
+            OperatorParameterValue("width", 0.1),
+            OperatorParameterValue("line_style", "CURVED"),
+            OperatorParameterValue("line_style_scale_x", .3),
+            OperatorParameterValue("line_style_scale_y", .1),
+        ]
+        splitOperator = SplitOperator(param_values)
+
+        newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
+
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-curved.svg')
+        for shape in newShapes:
+            svg.add_shape(shape)
+        svg.save_svg()
+
+        self.assertEqual(len(newShapes), 11, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
+
+    def test_half_circle(self):
+        shape: Shape = Shape(geometry=HOLED_POLYGON)
+        param_values = [
+            OperatorParameterValue("width", 0.1),
+            OperatorParameterValue("line_style", "HALF_CIRCLE"),
+            OperatorParameterValue("line_style_scale_x", .5),
+            OperatorParameterValue("line_style_scale_y", .75),
+        ]
+        splitOperator = SplitOperator(param_values)
+
+        newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
+
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-half-circle.svg')
+        for shape in newShapes:
+            svg.add_shape(shape)
+        svg.save_svg()
+
+        self.assertEqual(len(newShapes), 12, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
+
+
+
+    def test_noise(self):
+        shape: Shape = Shape(geometry=HOLED_POLYGON)
+        param_values = [
+            OperatorParameterValue("width", 0.1),
+            OperatorParameterValue("line_style", "NOISE"),
+            OperatorParameterValue("line_style_scale_x", 0.4),
+            OperatorParameterValue("line_style_scale_y", 0.4),
+            OperatorParameterValue("random_seed", 2)
+        ]
+        splitOperator = SplitOperator(param_values)
+
+        newShapes: list[Shape] = splitOperator.execute([shape], ['split'])
+
+        svg = SVG(SCRIPT_DIR + '/results/test-split-operator-noise.svg')
+        for shape in newShapes:
+            svg.add_shape(shape)
+        svg.save_svg()
+
+        self.assertEqual(len(newShapes), 10, "number of split shapes equal")
+        self.assertEqual(newShapes[0].tag, "split", "new tag name should equal split")
 
 if __name__ == '__main__':
     unittest.main()

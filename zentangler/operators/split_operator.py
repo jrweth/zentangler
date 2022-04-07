@@ -1,12 +1,64 @@
-from math import cos, sin
+import math
+from perlin_noise import PerlinNoise
 
-import shapely.geometry
 
 from zentangler.operators.abstract_operator import AbstractOperator
 from zentangler.operators.operator_parameter import OperatorParameter, ParameterDataType, OperatorParameterValue
 from zentangler.shape import Shape
 from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
 from shapely import affinity
+
+
+def sineCurveLine(numPoints):
+    """
+    return the points of a sine curve between 0 and 1
+    """
+    points = []
+    for i in range(numPoints+1):
+        x = i/numPoints
+        points.append((x, math.sin(i * math.pi * 2 / numPoints)))
+    return points
+
+def halfCircleLine(numPoints):
+    """
+    return the points of a half circle between 0 and 1
+    """
+    points = []
+    for i in range(numPoints+1):
+        x = i/numPoints
+        y = math.sqrt(0.25 - math.pow((x - 0.5), 2))
+        points.append((x, y))
+    return points
+
+def noiseLine(numPoints):
+    points = []
+    for i in range(numPoints+1):
+        x = i/numPoints
+        y = 0
+        points.append((x, y))
+    return points
+
+def getPerlinJitter(x, y, seed):
+    noise1 = PerlinNoise(octaves=1, seed=seed)
+    noise2 = PerlinNoise(octaves=2, seed=seed)
+    noise3 = PerlinNoise(octaves=4, seed=seed)
+    jitter = noise1([x, y])
+    jitter += 0.5 * noise2([x, y])
+    jitter += 0.25 * noise3([x, y])
+    return jitter
+
+# lines defined by a series of points going from x=0 to x=1
+LINE_STYLE = {
+    "STRAIGHT": [(0, 0), (1, 0)],
+    "JAGGED": [(0, 0), (0.25, 0.25), (0.75, -0.25), (1, 0)],
+    "STEPPED": [(0, 0), (0.25, 0), (0.25, .5), (0.75, .5), (.75, 0), (1, 0)],
+    "CURVED": sineCurveLine(20),
+    "HALF_CIRCLE": halfCircleLine(20),
+    "NOISE": noiseLine(20)
+}
+
+
+
 
 class SplitOperator(AbstractOperator):
     """
@@ -28,7 +80,22 @@ class SplitOperator(AbstractOperator):
                           description="angle of the split lines in degrees (-90 to 90)"),
         OperatorParameter(name="cross_split", data_type=ParameterDataType.BOOL, default=False,
                           description="if the split should be split along both x and y axis"),
+        OperatorParameter(name="line_style", data_type=ParameterDataType.STRING, default="STRAIGHT",
+                          description="the type of line style to create the splits"),
+        OperatorParameter(name="line_style_scale_x", data_type=ParameterDataType.FLOAT, default=0.1,
+                          description="how much the line style is scaled along the x axis"),
+        OperatorParameter(name="line_style_scale_y", data_type=ParameterDataType.FLOAT, default=0.1,
+                          description="how much the line style is scaled along the y axis"),
+        OperatorParameter(name="random_seed", data_type=ParameterDataType.INT, default=1,
+                          description="seed for any random elements (eg. noise line)")
     ]
+
+    def __init__(self, parameter_values: list):
+        """
+        initialize the parameters and build the basic strip for splitting
+        """
+        AbstractOperator.__init__(self, parameter_values)
+        self.split_strip_points = self.build_polygon_strip_points()
 
     def execute(self, shapes: list, output_tags: list) -> list:
         self.output_tags = output_tags
@@ -69,7 +136,7 @@ class SplitOperator(AbstractOperator):
             y += width
 
             # create the strip to divide the shape by horzintal lines (use 2 for x value so when rotating we still intersect
-            strip = Polygon([(-2, y), (2, y), (2, y + width), (-2, y + width)])
+            strip = self.get_offset_polygon_strip(y)
             # rotate the strip around the provided angle
             strip = affinity.rotate(strip, angle, (0, 0))
             new_polys = []
@@ -105,3 +172,62 @@ class SplitOperator(AbstractOperator):
                 new_shape.tag = self.output_tags[0]
                 self.new_shapes.append(new_shape)
         return
+
+    def build_polygon_strip_points(self):
+        """
+        build the polygon points for one strip based upon line style, line style scale and width
+        """
+        width = self.get_parameter_value("width")
+        scale_x = self.get_parameter_value("line_style_scale_x")
+        scale_y = self.get_parameter_value("line_style_scale_y")
+        line_style = self.get_parameter_value("line_style")
+        seed = self.get_parameter_value("random_seed")
+        line_points = LINE_STYLE[line_style]
+
+        if line_style == "NOISE":
+            for i in range(len(line_points)):
+                x = line_points[i][0]
+                y = line_points[i][1]
+                line_points[i] = (x, getPerlinJitter(x, y, seed) * scale_y)
+
+        # we start creating the line at -2 so when rotating the polygon still intersect the unit square
+        start_x = -2
+        end_x = 2
+        current_x = start_x
+
+        # create the bottom line
+        poly_strip_points = []
+        poly_strip_points.append((current_x, 0))
+        while current_x <= end_x:
+            for i in range(1, len(line_points)):
+                x = current_x + line_points[i][0] * scale_x
+                y = line_points[i][1] * scale_y
+                poly_strip_points.append((x, y))
+            current_x += scale_x
+
+        # cycle backwards through the points but add the width for the top line
+        current_x -= scale_x
+        while current_x >= start_x:
+            for i in reversed(range(1, len(line_points))):
+                x = current_x + line_points[i][0] * scale_x
+                y = line_points[i][1] * scale_y + width
+                poly_strip_points.append((x, y))
+            current_x -= scale_x
+
+        #add the last point
+        current_x += scale_x
+        poly_strip_points.append((current_x, 0 + width))
+
+        return poly_strip_points
+
+    def get_offset_polygon_strip(self, y_offset):
+        """
+        creates a polygon based upon our split strip points but offset by the width
+        """
+        offsetPoints = []
+        for point in self.split_strip_points:
+            x = point[0]
+            y = point[1] + y_offset
+            offsetPoints.append((x, y))
+        return Polygon(offsetPoints)
+
