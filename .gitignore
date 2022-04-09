@@ -1,3 +1,4 @@
 .idea
 /test/results/*.svg
 /test/results/*.png
+.DS_Store
