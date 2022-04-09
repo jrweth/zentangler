@@ -1,7 +1,7 @@
 import svgwrite
 from svgwrite import Drawing
 from svgwrite.path import Path
-from shape import Shape
+from zentangler.shape import Shape
 import cairosvg
 
 class SVG:

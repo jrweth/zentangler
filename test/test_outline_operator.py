@@ -122,6 +122,13 @@ class TestOutlineOperator(unittest.TestCase):
             svg.add_shape(shape)
         svg.save_svg()
 
+    def test_thumbnail(self):
+        param_values = [
+            OperatorParameterValue("width", 0.07)
+        ]
+        operator = OutlineOperator(param_values)
+        png_filename = SCRIPT_DIR + '/results/test-outline-operator-thumbnail.png'
+        operator.create_thumbnail(png_filename)
 
 if __name__ == '__main__':
     unittest.main()

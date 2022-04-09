@@ -95,9 +95,9 @@ class SplitOperator(AbstractOperator):
         initialize the parameters and build the basic strip for splitting
         """
         AbstractOperator.__init__(self, parameter_values)
-        self.split_strip_points = self.build_polygon_strip_points()
 
     def execute(self, shapes: list, output_tags: list) -> list:
+        self.split_strip_points = self.build_polygon_strip_points()
         self.output_tags = output_tags
 
         # loop through the shapes provided and do the split

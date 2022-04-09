@@ -29,7 +29,7 @@ class OperatorParameter:
 
         """
         self.name = name
-        self.type = type
+        self.data_type = data_type
         self.default = default
         self.description = description
 
