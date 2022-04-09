@@ -1,15 +1,15 @@
 from zentangler.svg import SVG
-from zentangler.shape import Shape
 import pymel.core as pm
 import os
 
-class TextureGenerator():
+
+class TextureGenerator:
     """
     Class which takes a test_maya node object and a list of generated zentangle shapes and
     creates a texture image and creates a material and shader to shade that image
     """
 
-    def __init__(self, obj, generated_shapes):
+    def __init__(self, obj, generated_shapes, override_png_filename: str = None):
         """
         initialize the texture generator with the object and generated shapes
         Parameters:
@@ -17,36 +17,47 @@ class TextureGenerator():
                 the object for which the texture is being generated
             generated_shapes:
                 the list of zentangler Shapes to add to the texture
+            override_png_filename: str
+                the filename (with full path) of the png file to save the image to
         """
         self.obj: pm.general.PyNode = obj
-        self.generated_shapes: list[Shape] = generated_shapes
+        self.generated_shapes: list = generated_shapes
+        self.override_png_filename = override_png_filename
 
-    def get_texture_file_name(self, type="png"):
+    def get_texture_file_name(self, filetype: str = "png"):
         """
         get the name of the texture files (png or svg) will create a folder in the current
         maya project to hold the images
 
         Parameters:
-            type: string
+            filetype: string
                 the file type (svg, png) of the texture file
         """
-        folderPath = pm.workspace.getPath() + "/zentangler"
+        if self.override_png_filename is not None:
+            if filetype == "png":
+                return self.override_png_filename
+            if filetype == "svg":
+                return self.override_png_filename.replace('.png', '.svg').replace('.PNG', '.SVG')
+
+        # if we aren't overriding the filename then set the default texture file name
+        folder_path = pm.workspace.getPath() + "/zentangler"
+
         # if no zentangler folder exists for this project then make one
-        if not os.path.isdir(folderPath):
-            os.mkdir(folderPath)
-        return folderPath + "/zentangler_" + self.obj.name() + "." + type
+        if not os.path.isdir(folder_path):
+            os.mkdir(folder_path)
+        return folder_path + "/zentangler_" + self.obj.name() + "." + filetype
 
-
-    def create_texture_file(self):
+    def create_texture_file(self, resolution: int = 1024):
         """
         create the svg and png textures files for the object and generated shapes
         """
         file_path_svg = self.get_texture_file_name("svg")
         file_path_png = self.get_texture_file_name("png")
+
         svg = SVG(file_path_svg)
         for shape in self.generated_shapes:
             svg.add_shape(shape)
-        svg.save_png(file_path_png)
+        svg.save_png(file_path_png, resolution)
 
     def assign_texture(self):
         """

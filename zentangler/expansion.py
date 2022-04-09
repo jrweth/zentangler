@@ -1,4 +1,5 @@
 from zentangler.shape import Shape
+from zentangler.svg import SVG
 
 
 class Expansion:
@@ -74,3 +75,34 @@ class Expansion:
                 shapes.append(r)
 
         return shapes
+
+    def createExpansionSVG(self, svg_filename):
+        """
+        create an SVG file based upon the calculated shapes in this expansion
+
+        Parameters:
+            svg_filename: string
+                the filename (path included) of the svg file to save (should end in ".svg")
+
+        """
+        svg = SVG(svg_filename)
+        for shape in self.getShapesForNewExpansion():
+            svg.add_shape(shape)
+        svg.save_svg()
+
+    def createExpansionPNG(self, png_filename):
+        """
+        create an PNG file based upon the calculated shapes in this expansion
+
+        Parameters:
+            png_filename: string
+                the filename (path included) of the png file to save (should end in ".png")
+
+        """
+        svg_filename = png_filename.replace(".png", ".svg").replace(".PNG", ".SVG")
+        svg = SVG(svg_filename)
+        for shape in self.getShapesForNewExpansion():
+            svg.add_shape(shape)
+        svg.save_png(png_filename)
+
+
