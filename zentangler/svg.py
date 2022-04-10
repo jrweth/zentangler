@@ -1,8 +1,8 @@
 import svgwrite
+import subprocess
 from svgwrite import Drawing
 from svgwrite.path import Path
 from zentangler.shape import Shape
-import cairosvg
 
 class SVG:
     """
@@ -43,4 +43,24 @@ class SVG:
 
     def save_png(self, png_filename, resolution: int = 1024):
         self.save_svg()
-        cairosvg.svg2png(url=self.filename, write_to=png_filename, scale=resolution)
+
+        # this is hardcoded and we need some way to find it or someplace to configure it
+        inkscape_path = '/opt/local/bin/inkscape'
+
+        # this wasn't working when calling from maya so
+        # try:
+        #     inkscape_path = subprocess.check_output(["which", "inkscape"]).strip()
+        # except subprocess.CalledProcessError:
+        #     print("ERROR: You need inkscape installed to use this script.")
+        #     exit(1)
+
+        args = [
+            inkscape_path,
+            "--without-gui",
+            "-f", self.filename,
+            "--export-area-page",
+            "-w", str(resolution),
+            "-h", str(resolution),
+            "--export-png=" + png_filename
+        ]
+        subprocess.run(args)
