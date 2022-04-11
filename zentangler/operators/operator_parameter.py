@@ -42,12 +42,18 @@ class OperatorParameter:
                 the start of the range for numeric values
             range_end: int|float
                 the end of the range for numeric values
+            is_multiple: bool
+                flag indicating if a list of values should be provided rather than just 1
 
         """
         self.name = name
         self.data_type = data_type
         self.default = default
         self.description = description
+        self.options = options
+        self.range_start = range_start
+        self.range_end = range_end
+        self.is_multiple = is_multiple
 
 
 class OperatorParameterValue:
