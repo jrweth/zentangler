@@ -16,6 +16,8 @@ def main():
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     grammar_filepath = SCRIPT_DIR + "/grammars/test_grammar_1.json"
 
+    print(os.getcwd())
+
     grammarManager = GrammarManager()
     # parse grammar & rules
     grammar = grammarManager.get_grammar(grammar_filepath)

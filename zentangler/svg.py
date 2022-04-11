@@ -3,7 +3,8 @@ from math import floor
 from svgwrite import Drawing
 from svgwrite.path import Path
 from zentangler.shape import Shape
-import cairosvg
+from svglib.svglib import svg2rlg
+from reportlab.graphics import renderPM
 
 class SVG:
     """
@@ -56,4 +57,6 @@ class SVG:
 
     def save_png(self, png_filename, resolution: int = 1024):
         self.save_svg()
-        cairosvg.svg2png(url=self.filename, write_to=png_filename, scale=resolution)
+
+        drawing = svg2rlg(self.filename)
+        renderPM.drawToFile(drawing, 'output/ice.png', fmt='PNG')

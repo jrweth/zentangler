@@ -1,17 +1,9 @@
 import pymel.core as pm
-from pymel.all import mel
-from shapely.geometry import Polygon, MultiPolygon
-
-from zentangler_maya.uv_shape_generator import UVShapeGenerator
-from zentangler_maya.texture_generator import TextureGenerator
 from zentangler.operators.split_operator import SplitOperator
 from zentangler.operators.outline_operator import OutlineOperator
 from zentangler.operators.operator_parameter import OperatorParameterValue as OPV
 from zentangler.operators.operator_parameter import ParameterDataType
-from zentangler.shape import Shape
-from shapely.geometry import Polygon, MultiPolygon
 from zentangler.rule import Rule
-from zentangler.svg import SVG
 
 """
 import sys
@@ -68,10 +60,9 @@ def param_value_changed(uv_shell_index, rule_index, param_name, *args):
     make_operator_icon(rules[rule_index], "obj1", uv_shell_index, rule_index)
 
 
-def add_grammar_rule_widget(obj, uv_shell_index, rule_index, rule: Rule):
+def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
     global icon_images
     with pm.frameLayout(label=rule.name, collapsable=True, collapse=True):
-        zentangle_path = pm.workspace.getPath() + "/zentangler/"
         image_path = get_rule_image_filename("obj1", uv_shell_index, rule_index)
         icon_images[image_path] = pm.image(image=image_path, backgroundColor=[0.5, 0.5, 0.5], width=100, height=100)
         make_operator_icon(rule, "obj1", uv_shell_index, rule_index)
@@ -110,12 +101,12 @@ def OpenZentangler():
     with pm.scrollLayout():
         with pm.columnLayout(adjustableColumn=True):
             pm.text("Tangle Grammar Editor")
-            add_grammar_rule_widget("obj", 0, 0, rule1)
-            add_grammar_rule_widget("obj", 0, 1, rule2)
+            add_grammar_rule_widget(0, 0, rule1)
+            add_grammar_rule_widget(0, 1, rule2)
     # Result: ui.Button('window1|columnLayout98|button112') #
     pm.setParent('..')
     # Result: u'' #
     pm.showWindow(window)
 
 
-OpenZentangler()
+# OpenZentangler()
