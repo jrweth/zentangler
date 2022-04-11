@@ -19,6 +19,11 @@ def add_rules_to_ui():
     rules = tangle.grammar.rules
 
     with pm.columnLayout(adjustableColumn=True):
+        pm.text("2")
+    pm.setParent(window)
+    pm.showWindow(window)
+
+    with pm.columnLayout(adjustableColumn=True):
         pm.text("Tangle Grammar Editor")
 
         for rule in rules:
@@ -62,20 +67,25 @@ def create_tangles_from_selected(grammar_list, uv_type_radios):
 
     tangle = tangle_info.get("tangle")
 
+    # with pm.columnLayout(adjustableColumn=True):
+    #     pm.text("1")
+    # pm.setParent(window)
+    # pm.showWindow(window)
+
     add_rules_to_ui()
 
 
 def create_tangle_window():
     '''Remote Debug Connection Code'''
-    # This should be the path your PyCharm installation
-    pydevd_egg = r"/Applications/PyCharm.app/Contents/debug-eggs/pycharm-debug.egg"
-    if not pydevd_egg in sys.path:
-        sys.path.append(pydevd_egg)
-    import pydevd
-    # This clears out any previous connection in case you restarted the debugger from PyCharm
-    pydevd.stoptrace()
-    # 9001 matches the port number that I specified in my configuration
-    pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True, suspend=False)
+    # # This should be the path your PyCharm installation
+    # pydevd_egg = r"/Applications/PyCharm.app/Contents/debug-eggs/pycharm-debug.egg"
+    # if not pydevd_egg in sys.path:
+    #     sys.path.append(pydevd_egg)
+    # import pydevd
+    # # This clears out any previous connection in case you restarted the debugger from PyCharm
+    # pydevd.stoptrace()
+    # # 9001 matches the port number that I specified in my configuration
+    # pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True, suspend=False)
 
     # if the window already exists then delete it
     if pm.window('CreateZenTangleWindow', exists=True):
@@ -86,8 +96,8 @@ def create_tangle_window():
     with pm.scrollLayout():
         with pm.columnLayout(adjustableColumn=True):
             pm.text("Select Object(s) to create the tangle")
-            pm.text(label="Base Tangle Rules: ", align="left")
             # with pm.gridLayout(numberOfColumns=2, cellWidth=100, cellHeight=40):
+            pm.text(label="Base Tangle Rules: ", align="left")
             grammar = pm.textScrollList(
                 append=["Random", "Style1", "Style2", "Style3", "Style4"],
                 selectItem="Random",
