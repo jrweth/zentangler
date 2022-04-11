@@ -49,7 +49,7 @@ class SVG:
         """
         return "rgb(" + str(floor(rgb[0] * 255)) \
                + ", " + str(floor(rgb[1] * 255)) \
-               + ", " + str(floor(rgb[1] * 255)) + ")"
+               + ", " + str(floor(rgb[2] * 255)) + ")"
 
     def save_svg(self):
         self.dwg.save()
