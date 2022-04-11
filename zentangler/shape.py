@@ -12,8 +12,8 @@ class Shape:
             shape_attributes: list = [],
             parent_shape = None,
             stroke_width: float = 0.01,
-            stroke_color: str = "#000000",
-            fill_color: str = "#CCCCCC"
+            stroke_color: () = (0, 0, 0),
+            fill_color: () = (0.9, 0.9, 0.9)
     ):
         """
         initializer for a shape class instance
