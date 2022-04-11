@@ -105,8 +105,6 @@ class OutlineOperator(AbstractOperator):
             remainder_shape.geometry = MultiPolygon([remainder_polygon])
             remainder_shape.tag = self.output_tags[1]
             remainder_shape.group_id = 0
-            # @todo remove this hardcoded setting of color
-            remainder_shape.fill_color = "#FF0000"
             remainder_shape.shape_id = self.tag2_shape_id
             self.tag2_shape_id = self.tag2_shape_id + 1
             self.new_shapes.append(remainder_shape)

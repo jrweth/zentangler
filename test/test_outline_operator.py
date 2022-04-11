@@ -39,6 +39,8 @@ class TestOutlineOperator(unittest.TestCase):
 
         svg = SVG(SCRIPT_DIR + '/results/test-outline-operator-simple.svg')
         for shape in newShapes:
+            if shape.tag == "remainder":
+                shape.fill_color = (1, 0, 0)
             svg.add_shape(shape)
         svg.save_svg()
 
@@ -59,6 +61,8 @@ class TestOutlineOperator(unittest.TestCase):
 
         svg = SVG(SCRIPT_DIR + '/results/test-outline-operator-hole.svg')
         for shape in newShapes:
+            if shape.tag == "remainder":
+                shape.fill_color = (1, 0, 0)
             svg.add_shape(shape)
         svg.save_svg()
 
@@ -82,6 +86,8 @@ class TestOutlineOperator(unittest.TestCase):
 
         svg = SVG(SCRIPT_DIR + '/results/test-outline-operator-holes.svg')
         for shape in newShapes:
+            if shape.tag == "remainder":
+                shape.fill_color = (1, 0, 0)
             svg.add_shape(shape)
         svg.save_svg()
 
@@ -101,6 +107,8 @@ class TestOutlineOperator(unittest.TestCase):
 
         svg = SVG(SCRIPT_DIR + '/results/test-outline-operator-holes2.svg')
         for shape in newShapes:
+            if shape.tag == "remainder":
+                shape.fill_color = (1, 0, 0)
             svg.add_shape(shape)
         svg.save_svg()
 
@@ -119,6 +127,8 @@ class TestOutlineOperator(unittest.TestCase):
 
         svg = SVG(SCRIPT_DIR + '/results/test-outline-operator-holes3.svg')
         for shape in newShapes:
+            if shape.tag == "remainder":
+                shape.fill_color = (1, 0, 0)
             svg.add_shape(shape)
         svg.save_svg()
 
