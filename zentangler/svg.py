@@ -59,4 +59,4 @@ class SVG:
         self.save_svg()
 
         drawing = svg2rlg(self.filename)
-        renderPM.drawToFile(drawing, 'output/ice.png', fmt='PNG')
+        # renderPM.drawToFile(drawing, 'output/ice.png', fmt='PNG')

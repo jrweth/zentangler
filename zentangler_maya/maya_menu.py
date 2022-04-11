@@ -24,11 +24,6 @@ def add_rules_to_ui():
     rules = tangle.grammar.rules
 
     with pm.columnLayout(adjustableColumn=True):
-        pm.text("2")
-    pm.setParent(window)
-    pm.showWindow(window)
-
-    with pm.columnLayout(adjustableColumn=True):
         pm.text("Tangle Grammar Editor")
 
         for rule in rules:
@@ -71,18 +66,19 @@ def create_tangles_from_selected(grammar_list, uv_type_radios):
         tangle_info = create_silhouette_tangle(selectedObj, grammar_filename=grammar_filename)
 
     tangle = tangle_info.get("tangle")
+    image_path = tangle_info.get("png_filename")
 
-    # with pm.columnLayout(adjustableColumn=True):
-    #     pm.text("1")
-    # pm.setParent(window)
-    # pm.showWindow(window)
+    with pm.columnLayout(adjustableColumn=True):
+        pm.image(image=image_path, backgroundColor=[0.5, 0.5, 0.5], width=200, height=200)
+    pm.setParent(window)
+    pm.showWindow(window)
 
     add_rules_to_ui()
 
 
 def create_tangle_window():
     '''Remote Debug Connection Code'''
-    # # This should be the path your PyCharm installation
+    # # # This should be the path your PyCharm installation
     # pydevd_egg = r"/Applications/PyCharm.app/Contents/debug-eggs/pycharm-debug.egg"
     # if not pydevd_egg in sys.path:
     #     sys.path.append(pydevd_egg)
