@@ -83,11 +83,11 @@ class SplitOperator(AbstractOperator):
         OperatorParameter(name="line_style", data_type=ParameterDataType.STRING, default="STRAIGHT",
                           description="the type of line style to create the splits"),
         OperatorParameter(name="line_style_scale_x", data_type=ParameterDataType.FLOAT, default=0.1,
-                          description="how much the line style is scaled along the x axis"),
+                          description="how much the line style is scaled along the x axis", range_start=0.001, range_end=1.0),
         OperatorParameter(name="line_style_scale_y", data_type=ParameterDataType.FLOAT, default=0.1,
-                          description="how much the line style is scaled along the y axis"),
+                          description="how much the line style is scaled along the y axis", range_start=0.001, range_end=1.0),
         OperatorParameter(name="random_seed", data_type=ParameterDataType.INT, default=1,
-                          description="seed for any random elements (eg. noise line)")
+                          description="seed for any random elements (eg. noise line)", range_start=1, range_end=1000)
     ]
 
     def __init__(self, parameter_values: list):

@@ -72,13 +72,13 @@ def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
                 value = rule.operator.get_parameter_value(param.name)
 
                 if param.data_type == ParameterDataType.INT:
-                    pm.intField(value=value,
+                    pm.intSlider(value=value,
                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
                                                                   param.name),
                                 min=param.range_start, max=param.range_end)
 
                 if param.data_type == ParameterDataType.FLOAT:
-                    pm.floatField(value=value,
+                    pm.floatSlider(value=value,
                                   changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
                                                                     param.name),
                                   min=param.range_start, max=param.range_end)
