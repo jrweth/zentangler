@@ -1,7 +1,6 @@
 from zentangler.expansion import Expansion
 from zentangler.expansion_manager import ExpansionManager
-from grammar import Grammar
-from shape import Shape
+from zentangler.grammar import Grammar
 
 
 class Tangle:
