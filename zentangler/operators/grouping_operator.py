@@ -4,6 +4,8 @@ from zentangler.operators.operator_parameter import OperatorParameter, Parameter
 
 class UngroupOperator(AbstractOperator):
 
+    num_output_tags = 1
+
     def execute(self, shapes: list, output_tags: list) -> list:
         gid = 0
 
@@ -23,6 +25,7 @@ class RegroupOperator(AbstractOperator):
         OperatorParameter(name="k", data_type=ParameterDataType.INT, default=1,
                           description="number of groups"),
     ]
+    num_output_tags = 0
 
     def execute(self, shapes: list, output_tags: list) -> list:
         k = self.get_parameter_value("k")
@@ -30,6 +33,7 @@ class RegroupOperator(AbstractOperator):
         for shape in shapes:
             shape.group_id = shape.shape_id % k
             shape.tag = output_tags[shape.shape_id % k]
+            self.num_output_tags += 1
 
             self.new_shapes.append(shape)
 

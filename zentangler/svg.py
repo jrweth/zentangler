@@ -2,7 +2,7 @@ import svgwrite
 from svgwrite import Drawing
 from svgwrite.path import Path
 from zentangler.shape import Shape
-import cairosvg
+# import cairosvg
 
 class SVG:
     """
@@ -43,4 +43,4 @@ class SVG:
 
     def save_png(self, png_filename, resolution: int = 1024):
         self.save_svg()
-        cairosvg.svg2png(url=self.filename, write_to=png_filename, scale=resolution)
+        # cairosvg.svg2png(url=self.filename, write_to=png_filename, scale=resolution)
