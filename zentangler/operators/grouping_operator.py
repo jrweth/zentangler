@@ -22,8 +22,8 @@ class UngroupOperator(AbstractOperator):
 class RegroupOperator(AbstractOperator):
 
     parameters = [
-        OperatorParameter(name="k", data_type=ParameterDataType.INT, default=1,
-                          description="number of groups"),
+        OperatorParameter(name="k", data_type=ParameterDataType.INT, default=2,
+                          description="number of groups", range_start=2, range_end=10),
     ]
     num_output_tags = 0
 

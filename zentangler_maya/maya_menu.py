@@ -6,11 +6,16 @@ from zentangler.tangle import Tangle
 from zentangler_maya.tangle_creation import create_uv_map_tangle, create_silhouette_tangle
 import zentangler_maya.rule_editor as rule_editor
 
-
 window: None
 selectedObj: None
 tangle_info: dict
 tangle: Tangle
+
+'''Paste in Maya Script Editor
+import importlib
+from zentangler_maya import maya_menu
+importlib.reload(maya_menu)
+'''
 
 
 def add_rules_to_ui():

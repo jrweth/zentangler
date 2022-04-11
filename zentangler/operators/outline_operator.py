@@ -26,7 +26,7 @@ class OutlineOperator(AbstractOperator):
     num_output_tags: int = 2
     parameters = [
         OperatorParameter(name="width", data_type=ParameterDataType.FLOAT, default=0.1,
-                          description="width of the split"),
+                          description="width of the split", range_start=0.001, range_end=1.0),
     ]
 
     def execute(self, shapes: list, output_tags: list) -> list:
