@@ -19,7 +19,7 @@ pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True
 """
 
 icon_images = {"switch": ""}
-
+rules = []
 def get_rule_image_filename(object_name, uv_shell_index, rule_index):
     zentangle_path = str(pm.workspace.getPath() + "/zentangler/")
     filename = zentangle_path + "_rule_" + object_name + "_" + str(uv_shell_index) + "_" + str(rule_index) + ".png"
@@ -45,6 +45,7 @@ def param_value_changed(uv_shell_index, rule_index, param_name, *args):
 def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
     global icon_images
     LINE_STYLE = ["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"]
+    rules.append(rule)
 
     with pm.frameLayout(label=rule.name, collapsable=True, collapse=True):
         image_path = get_rule_image_filename("obj1", uv_shell_index, rule_index)
