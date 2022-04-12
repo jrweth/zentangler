@@ -1,15 +1,18 @@
 import pymel.core as pm
+from pymel.core.windows import image
 import os
 import sys
 
 from zentangler.tangle import Tangle
 from zentangler_maya.tangle_creation import create_uv_map_tangle, create_silhouette_tangle
+from zentangler.svg import SVG
 import zentangler_maya.rule_editor as rule_editor
 
 window: None
 selectedObj: None
 tangle_info: dict
 tangle: Tangle
+tangle_image: image
 grammar_options = {
     "Style1": "test_grammar_1.json",
     "Style2": "test_grammar_1.json",
@@ -42,12 +45,26 @@ def add_rules_to_ui():
     pm.setParent(window)
     pm.showWindow(window)
 
+def refresh_tangle():
+    global tangle_info
+    tangle_info['tangle'].create()
+    png_path = tangle_info['png_filename']
+    svg_path = png_path.replace(".png", ".svg")
+    thumbnail_path = png_path.replace(".png", "_thumbnail.png")
+    svg = SVG(svg_path)
+    for shape in tangle.history[-1].getShapesForNewExpansion():
+        svg.add_shape(shape)
+    svg.save_png(png_path, 1024)
+    svg.save_png(thumbnail_path, 256)
+    tangle_image.setImage(thumbnail_path)
+
 
 def create_tangles_from_selected(base_grammar, uv_type_radios):
     global tangle_info
     global selectedObj
     global tangle
     global grammar_options
+    global tangle_image
 
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     grammar_filename = SCRIPT_DIR + "/../zentangler/grammars/" + grammar_options.get(base_grammar);
@@ -65,7 +82,8 @@ def create_tangles_from_selected(base_grammar, uv_type_radios):
     thumbnail_path = image_path.replace(".png", "_thumbnail.png")
 
     with pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250):
-        pm.image(image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=200, height=200)
+        tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=200, height=200)
+        pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle))
     pm.setParent(window)
     pm.showWindow(window)
 
