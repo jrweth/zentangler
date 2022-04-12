@@ -20,7 +20,9 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
             flag indicating if the texture should be assigned to the object once created
   
     """
-    
+
+    print("Grammar filename: " + grammar_filename)
+
     # parse grammar & rules
     grammar_manager = GrammarManager()
     grammar = grammar_manager.get_grammar(grammar_filename)

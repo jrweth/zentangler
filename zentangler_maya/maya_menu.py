@@ -10,11 +10,20 @@ window: None
 selectedObj: None
 tangle_info: dict
 tangle: Tangle
+grammar_options = {
+    "Style1": "test_grammar_1.json",
+    "Style2": "test_grammar_1.json",
+    "Style3": "test_grammar_1.json",
+    "Style4": "test_grammar_1.json",
+    "Random": "test_grammar_1.json",     # todo: randomize
+}
 
 '''Paste in Maya Script Editor
 import importlib
+from zentangler_maya import rule_editor
 from zentangler_maya import maya_menu
 importlib.reload(maya_menu)
+importlib.reload(rule_editor)
 '''
 
 
@@ -34,28 +43,14 @@ def add_rules_to_ui():
     pm.showWindow(window)
 
 
-def create_tangles_from_selected(grammar_list, uv_type_radios):
+def create_tangles_from_selected(base_grammar, uv_type_radios):
     global tangle_info
     global selectedObj
     global tangle
+    global grammar_options
 
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-    base_grammar = pm.textScrollList(grammar_list, q=True, si=True)[0]
-    grammar_filename = None
-    # grammar_file_path = pm.workspace.getPath() + "/zentangler/grammars/"
-    grammar_file_path = SCRIPT_DIR + "/../zentangler/grammars/"
-
-    if base_grammar == "Style1":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    if base_grammar == "Style2":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    if base_grammar == "Style3":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    if base_grammar == "Style4":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    elif base_grammar == "Random":      # todo: randomize
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
+    grammar_filename = SCRIPT_DIR + "/../zentangler/grammars/" + grammar_options.get(base_grammar);
 
     # make sure we have some objects selected
     selectedObj = pm.ls(sl=True)[0]
@@ -68,7 +63,7 @@ def create_tangles_from_selected(grammar_list, uv_type_radios):
     tangle = tangle_info.get("tangle")
     image_path = tangle_info.get("png_filename")
 
-    with pm.columnLayout(adjustableColumn=True):
+    with pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250):
         pm.image(image=image_path, backgroundColor=[0.5, 0.5, 0.5], width=200, height=200)
     pm.setParent(window)
     pm.showWindow(window)
@@ -94,23 +89,19 @@ def create_tangle_window():
 
     global window
     window = pm.window('CreateZenTangleWindow', title="Create ZenTangle", iconName='ZTangler', widthHeight=(400, 400))
-    with pm.scrollLayout():
-        with pm.columnLayout(adjustableColumn=True):
-            pm.text("Select Object(s) to create the tangle")
-            # with pm.gridLayout(numberOfColumns=2, cellWidth=100, cellHeight=40):
-            pm.text(label="Base Tangle Rules: ", align="left")
-            grammar = pm.textScrollList(
-                append=["Random", "Style1", "Style2", "Style3", "Style4"],
-                selectItem="Random",
-                height=80
-            )
-            pm.text(label="Apply as: ", align="left")
-            uv_type = pm.radioButtonGrp(
-                labelArray2=["current uv map", "silhouette"],
-                numberOfRadioButtons=2,
-                select=1
-            )
-        # cmds.textScrollList( s, q=True, si=True )
+    with pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250):
+        pm.text("Select Object(s) to create the tangle.")
+
+        pm.optionMenu(label='Select Grammar: ', changeCommand='')
+        for grammar in grammar_options:
+            pm.menuItem(label=grammar)
+
+        pm.text(label="Apply as: ", align="left")
+        uv_type = pm.radioButtonGrp(
+            labelArray2=["Current UV Map", "Scene Silhouette"],
+            numberOfRadioButtons=2,
+            select=1
+        )
 
         pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type))
     pm.setParent('..')
@@ -127,10 +118,6 @@ def add_zentangler_menu():
                    parent=g_main_window,
                    tearOff=True,
                    allowOptionBoxes=True
-
-                   # familyImage = familyImage,
-                   # mnemonic = 'alfred',
-                   # helpMenu = True,
                    )
 
     pm.menuItem(l='Create', p=menu, c=pm.Callback(create_tangle_window))

@@ -18,25 +18,7 @@ pydevd.stoptrace()
 pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True, suspend=False)
 """
 
-rule1 = Rule()
-rule1.name = "Rule 1 - Split"
-rule1.matching_tags = ["origin"]
-rule1.group_id = -1
-rule1.output_tags = ["origin_split"]
-rule1.parameters = []
-rule1.operator = SplitOperator(rule1.parameters)
 icon_images = {"switch": ""}
-
-rule2 = Rule()
-rule2.name = "Rule 2 - Outline"
-rule2.matching_tags = ["origin"]
-rule2.group_id = -1
-rule2.output_tags = ["outline", "remainder"]
-rule2.parameters = []
-rule2.operator = OutlineOperator(rule1.parameters)
-icon_images = {"switch": ""}
-rules = [rule1, rule2]
-
 
 def get_rule_image_filename(object_name, uv_shell_index, rule_index):
     zentangle_path = str(pm.workspace.getPath() + "/zentangler/")
@@ -62,12 +44,14 @@ def param_value_changed(uv_shell_index, rule_index, param_name, *args):
 
 def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
     global icon_images
+    LINE_STYLE = ["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"]
+
     with pm.frameLayout(label=rule.name, collapsable=True, collapse=True):
         image_path = get_rule_image_filename("obj1", uv_shell_index, rule_index)
         icon_images[image_path] = pm.image(image=image_path, backgroundColor=[0.5, 0.5, 0.5], width=100, height=100)
         make_operator_icon(rule, "obj1", uv_shell_index, rule_index)
         for param in rule.operator.parameters:
-            with pm.gridLayout(numberOfColumns=2, cellWidth=100, cellHeight=15):
+            with pm.gridLayout(numberOfColumns=2, cellWidth=150, cellHeight=15):
                 pm.text(param.name)
                 value = rule.operator.get_parameter_value(param.name)
 
@@ -88,10 +72,23 @@ def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
                                                                   param.name))
 
-                if param.data_type == ParameterDataType.STRING:
-                    pm.textField(text=value,
-                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                   param.name))
+                if param.data_type == ParameterDataType.STRING and param.name == "line_style":
+                    styles_menu = pm.optionMenu(changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index, param.name))
+                    index = 0
+                    for style in LINE_STYLE:
+                        pm.menuItem(label=style)
+
+                    # for style in LINE_STYLE:
+                    #     index += 1
+                    #     if style == value:
+                    #         pm.optionMenu(styles_menu, select=index)
+
+                    # pm.optionMenu(styles_menu, value=value)
+
+                # if param.data_type == ParameterDataType.STRING:
+                #     pm.textField(text=value,
+                #                  changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
+                #                                                    param.name))
 
 
 # Make a new window
