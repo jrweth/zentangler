@@ -35,6 +35,13 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
     texture_gen = TextureGenerator(obj, tangle.history[-1].getShapesForNewExpansion(), override_png_filename)
     texture_gen.create_texture_file()
 
+    #create the thumbnail
+    filename = texture_gen.get_texture_file_name("png")
+    thumbnail_filename = filename.replace(".png", "_thumbnail.png")
+    texture_gen.override_png_filename = thumbnail_filename
+    texture_gen.create_texture_file(256)
+    texture_gen.override_png_filename = None
+
     # assign texture if required
     if assign_texture:
         texture_gen.assign_texture()

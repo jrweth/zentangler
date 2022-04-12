@@ -62,9 +62,10 @@ def create_tangles_from_selected(base_grammar, uv_type_radios):
 
     tangle = tangle_info.get("tangle")
     image_path = tangle_info.get("png_filename")
+    thumbnail_path = image_path.replace(".png", "_thumbnail.png")
 
     with pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250):
-        pm.image(image=image_path, backgroundColor=[0.5, 0.5, 0.5], width=200, height=200)
+        pm.image(image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=200, height=200)
     pm.setParent(window)
     pm.showWindow(window)
 
