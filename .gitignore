@@ -3,3 +3,6 @@
 /test/results/*.png
 .DS_Store
 *.pyc
+zentangler/__pycache__/*.pyc
+zentangler/operators/__pycache__/*.pyc
+zentangler_maya/__pycache__/*.pyc
