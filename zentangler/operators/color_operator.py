@@ -8,6 +8,8 @@ class ColorOperator(AbstractOperator):
     operator to change the line and/or fill color of a given shape
     """
 
+    num_output_tags = 1
+
     parameters = [
         OperatorParameter(name="line_colors", data_type=ParameterDataType.RGB_COLOR, default=[(0, 0, 0)],
                           description="the color(s) to assign to the shape lines",
@@ -70,4 +72,5 @@ class ColorOperator(AbstractOperator):
 
         return self.new_shapes
 
-
+    def create_thumbnail(self, png_filename: str):
+        return self.create_thumbnail_grid(png_filename)
