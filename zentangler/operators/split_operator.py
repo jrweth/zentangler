@@ -111,7 +111,8 @@ class SplitOperator(AbstractOperator):
             self.new_shapes = []
 
             # set the new angle
-            new_angle = self.get_parameter_value("angle") - 90
+            angle = self.get_parameter_value("angle")
+            new_angle = angle - 90
             if new_angle < -90:
                 new_angle += 180
             self.set_parameter_value(OperatorParameterValue(name="angle", value=new_angle))
@@ -119,6 +120,8 @@ class SplitOperator(AbstractOperator):
             # rerun
             for shape in second_pass_shapes:
                 self.split_shape(shape)
+
+            self.set_parameter_value(OperatorParameterValue(name="angle", value=angle))
 
         return self.new_shapes
 

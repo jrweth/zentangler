@@ -23,3 +23,10 @@ class Rule:
             group_id: shape group id that need to match for rule to be applied
             output_tags: tags for the output shapes after rule is applied
         """
+        self.name = name
+        self.operator = operator
+        self.parameters = parameters
+        self.matching_tags = matching_tags
+        self.group_id = group_id
+        self.output_tags = output_tags
+
