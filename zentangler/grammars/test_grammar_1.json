@@ -12,7 +12,8 @@
 				"width" : 0.1,
 				"cross_split" : true
 			}
-		}, 
+		},
+
 		{ 
 			"rule_name" : "regroup",
 			"matching_tags" : ["a"],

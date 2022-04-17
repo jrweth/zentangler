@@ -35,26 +35,32 @@ class GrammarManager:
         grammar.rules = []
 
         for r in rules_dict:
-            new_rule = Rule()
+            rule_name = r.get("rule_name")
 
-            new_rule.name = r.get("rule_name")
-
-            new_rule.matching_tags = []
+            matching_tags = []
             matching_tags_dict = r.get("matching_tags")
             for m in matching_tags_dict:
-                new_rule.matching_tags.append(m)
+                matching_tags.append(m)
 
-            new_rule.group_id = r.get("group_id")
+            group_id = r.get("group_id")
 
-            new_rule.output_tags = []
+            output_tags = []
             output_tags_dict = r.get("output_tags")
             for o in output_tags_dict:
-                new_rule.output_tags.append(o)
+                output_tags.append(o)
 
-            new_rule.parameters = r.get("parameters")
+            parameters = r.get("parameters")
 
-            new_rule.operator = self.get_operator(r.get("operator"), new_rule.parameters)
+            operator = self.get_operator(r.get("operator"), parameters)
 
+            new_rule = Rule(
+                rule_name,
+                operator,
+                parameters,
+                matching_tags,
+                group_id,
+                output_tags
+            )
             grammar.rules.append(new_rule)
 
         self.grammar = grammar

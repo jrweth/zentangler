@@ -5,14 +5,14 @@ class Rule:
     """
     Rule class that holds details of a rule in a grammar
     """
-    name: str
-    operator: AbstractOperator
-    parameters: dict
-    matching_tags: list
-    group_id: int
-    output_tags: list
+    # name: str
+    # operator: AbstractOperator
+    # parameters: dict
+    # matching_tags: list
+    # group_id: int
+    # output_tags: list
 
-    def __init__(self): #, name, operator: AbstractOperator, parameters : list, matching_tags : list, group_id, output_tags : list):
+    def __init__(self, name, operator: AbstractOperator, parameters : list, matching_tags : list, group_id, output_tags : list):
         """
         initialize rule
 
