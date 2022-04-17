@@ -51,6 +51,7 @@ class RegroupOperator(AbstractOperator):
 
         for shape in shapes:
             shape.group_id = shape.shape_id % k
+            shape.tag = output_tags[shape.shape_id % k]
             self.new_shapes.append(shape)
 
         return self.new_shapes
@@ -59,6 +60,9 @@ class RegroupOperator(AbstractOperator):
         shapes = self.get_thumbnail_shapes_grid(0.25)
 
         output_tags = []
+        for i in range(self.get_parameter_value("k")):
+            output_tags.append("tag_" + str(i))
+
         new_shapes = self.execute(shapes, output_tags)
 
         #create the svg and png files

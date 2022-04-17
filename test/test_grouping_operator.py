@@ -27,7 +27,7 @@ class TestGroupingOperator(unittest.TestCase):
 
         shapes = operator.get_thumbnail_shapes_grid(0.25)
 
-        new_shapes = operator.execute(shapes, [])
+        new_shapes = operator.execute(shapes, ["shape1", "shape2"])
 
         self.assertEqual(new_shapes[0].group_id, 0, "first shape is group id 0")
         self.assertEqual(new_shapes[1].group_id, 1, "second shape is group id 1")
@@ -50,7 +50,7 @@ class TestGroupingOperator(unittest.TestCase):
 
         shapes = operator.get_thumbnail_shapes_grid(0.25)
 
-        new_shapes = operator.execute(shapes, [])
+        new_shapes = operator.execute(shapes, ["shape1", "shape2", "shape3"])
 
         self.assertEqual(new_shapes[0].group_id, 0, "first shape is group id 0")
         self.assertEqual(new_shapes[1].group_id, 1, "second shape is group id 1")
@@ -74,7 +74,7 @@ class TestGroupingOperator(unittest.TestCase):
 
         shapes = operator.get_thumbnail_shapes_grid(0.25)
 
-        new_shapes = operator.execute(shapes, [])
+        new_shapes = operator.execute(shapes, ["shape1", "shape2", "shape3", "shape4"])
 
         self.assertEqual(new_shapes[0].group_id, 0, "first shape is group id 0")
         self.assertEqual(new_shapes[1].group_id, 1, "second shape is group id 1")
