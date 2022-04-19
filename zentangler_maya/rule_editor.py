@@ -4,6 +4,7 @@ from zentangler.operators.outline_operator import OutlineOperator
 from zentangler.operators.operator_parameter import OperatorParameterValue as OPV
 from zentangler.operators.operator_parameter import ParameterDataType
 from zentangler.rule import Rule
+from zentangler.tangle import Tangle
 
 """
 import sys
@@ -35,14 +36,13 @@ def make_operator_icon(rule, object_name, uv_shell_index, rule_index):
     pm.refresh()
 
 
-def param_value_changed(uv_shell_index, rule_index, param_name, *args):
-    global rules
-    parameter = OPV(param_name, args[0])
-    rules[rule_index].operator.set_parameter_value(parameter)
-    make_operator_icon(rules[rule_index], "obj1", uv_shell_index, rule_index)
+def param_value_changed(uv_shell_index, rule_index, param_name, tangle, *args):
+    parameterValue = OPV(param_name, args[0])
+    tangle.update_rule_parameter(rule_index, parameterValue)
+    make_operator_icon(tangle.grammar.rules[rule_index], "obj1", uv_shell_index, rule_index)
 
 
-def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
+def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tangle):
     global icon_images
     LINE_STYLE = ["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"]
     rules.append(rule)
@@ -59,22 +59,23 @@ def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
                 if param.data_type == ParameterDataType.INT:
                     pm.intSlider(value=value,
                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                  param.name),
+                                                                  param.name, tangle),
                                 min=param.range_start, max=param.range_end, step=1)
 
                 if param.data_type == ParameterDataType.FLOAT:
                     pm.floatSlider(value=value,
                                   changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                    param.name),
+                                                                    param.name, tangle),
                                   min=param.range_start, max=param.range_end, step=0.01)
 
                 if param.data_type == ParameterDataType.BOOL:
                     pm.checkBox(value=value,
                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                  param.name))
+                                                                  param.name, tangle))
 
                 if param.data_type == ParameterDataType.STRING and param.name == "line_style":
-                    styles_menu = pm.optionMenu(changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index, param.name))
+                    styles_menu = pm.optionMenu(changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index,
+                                                                                  rule_index, param.name, tangle))
                     index = 0
                     for style in LINE_STYLE:
                         pm.menuItem(label=style)

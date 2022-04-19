@@ -30,8 +30,7 @@ importlib.reload(rule_editor)
 '''
 
 
-def add_rules_to_ui():
-    global tangle
+def add_rules_to_ui(tangle):
     i = 0
     rules = tangle.grammar.rules
 
@@ -39,14 +38,13 @@ def add_rules_to_ui():
         pm.text("Tangle Grammar Editor")
 
         for rule in rules:
-            rule_editor.add_grammar_rule_widget(0, i, rule)     # todo: uv_shell_index
+            rule_editor.add_grammar_rule_widget(0, i, rule, tangle)     # todo: uv_shell_index
             i += 1
 
     pm.setParent(window)
     pm.showWindow(window)
 
-def refresh_tangle():
-    global tangle_info
+def refresh_tangle(tangle_info, selectedObj):
     tangle_info['tangle'].create()
     png_path = tangle_info['png_filename']
     svg_path = png_path.replace(".png", ".svg")
@@ -57,6 +55,7 @@ def refresh_tangle():
     svg.save_png(png_path, 1024)
     svg.save_png(thumbnail_path, 256)
     tangle_image.setImage(thumbnail_path)
+    pm.select(selectedObj)
 
 
 def create_tangles_from_selected(base_grammar, uv_type_radios):
@@ -82,12 +81,13 @@ def create_tangles_from_selected(base_grammar, uv_type_radios):
     thumbnail_path = image_path.replace(".png", "_thumbnail.png")
 
     with pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250):
-        tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=200, height=200)
-        pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle))
+        tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=256, height=256)
+        pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle, tangle_info, selectedObj))
     pm.setParent(window)
     pm.showWindow(window)
 
-    add_rules_to_ui()
+    add_rules_to_ui(tangle)
+    pm.select(selectedObj)
 
 
 def create_tangle_window():
