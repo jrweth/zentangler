@@ -5,6 +5,9 @@ from zentangler.operators.split_operator import SplitOperator
 from zentangler.operators.operator_parameter import OperatorParameterValue
 from zentangler.operators.grouping_operator import RegroupOperator
 from zentangler.operators.grouping_operator import UngroupOperator
+from zentangler.operators.color_operator import ColorOperator
+from zentangler.operators.line_width_operator import LineWidthOperator
+from zentangler.operators.operator_parameter import ParameterDataType
 import json
 
 class GrammarManager:
@@ -53,6 +56,13 @@ class GrammarManager:
 
             operator = self.get_operator(r.get("operator"), parameters)
 
+            for param_name in parameters:
+                parameters[param_name] = self.adjust_param_value_for_datatype(
+                    operator,
+                    param_name,
+                    parameters[param_name]
+                )
+
             new_rule = Rule(
                 rule_name,
                 operator,
@@ -84,4 +94,25 @@ class GrammarManager:
         if operator_name == "regroup":
             operator = RegroupOperator(param_values)
 
+        if operator_name == "color":
+            operator = ColorOperator(param_values)
+
+        if operator_name == "line_width":
+            operator = LineWidthOperator(param_values)
+
         return operator
+
+    def adjust_param_value_for_datatype(self, operator: AbstractOperator, param_name: str, param_value):
+        """
+        adjust the parameter value based on the expected data type
+        """
+        param_def = operator.get_parameter_definition(param_name)
+        if param_def and param_def.data_type == ParameterDataType.RGB_COLOR:
+            if param_def.is_multiple:
+                colors = []
+                for value in param_value:
+                    colors.append((value[0], value[1], value[2]))
+                return colors
+            else:
+                return (param_value[0], param_value[1], param_value[2])
+        return param_value

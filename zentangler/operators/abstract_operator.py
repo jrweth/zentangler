@@ -130,3 +130,16 @@ class AbstractOperator(ABC):
         for shape in new_shapes:
             svg.add_shape(shape)
         svg.save_png(png_filename, resolution=100)
+
+    def get_parameter_definition(self, parameter_name):
+        """
+        get the parameter specified (not the value)
+
+        Parameters:
+            parameter_name: str
+                the name of the parameter to retrieve the data type for
+        """
+        for param in self.parameters:
+            if param.name == parameter_name:
+                return param
+        return None

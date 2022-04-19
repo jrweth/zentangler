@@ -15,7 +15,7 @@ tangle: Tangle
 tangle_image: image
 grammar_options = {
     "Style1": "test_grammar_1.json",
-    "Style2": "test_grammar_1.json",
+    "Style2": "test_grammar_2.json",
     "Style3": "test_grammar_1.json",
     "Style4": "test_grammar_1.json",
     "Random": "test_grammar_1.json",     # todo: randomize
@@ -59,7 +59,7 @@ def refresh_tangle(tangle_info, selectedObj):
     pm.select(selectedObj)
 
 
-def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout):
+def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, grammar_picker):
     global tangle_info
     global selectedObj
     global tangle
@@ -67,8 +67,10 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout):
     global tangle_image
 
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    grammar_filename = SCRIPT_DIR + "/../zentangler/grammars/" + grammar_options.get(base_grammar);
+    grammar_filename = SCRIPT_DIR + "/../zentangler/grammars/" + grammar_options.get(grammar_picker.getValue())
 
+    print (grammar_picker.getValue())
+    print (grammar_options[grammar_picker.getValue()])
     # make sure we have some objects selected
     selectedObj = pm.ls(sl=True)[0]
 
@@ -114,7 +116,7 @@ def create_tangle_window():
     with main_layout:
         pm.text("Select Object(s) to create the tangle.")
 
-        pm.optionMenu(label='Select Grammar: ', changeCommand='')
+        grammar_picker = pm.optionMenu(label='Select Grammar: ', changeCommand='')
         for grammar in grammar_options:
             pm.menuItem(label=grammar)
 
@@ -125,7 +127,7 @@ def create_tangle_window():
             select=1
         )
 
-        pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type, main_layout))
+        pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type, main_layout, grammar_picker))
     pm.setParent('..')
     pm.showWindow(window)
 

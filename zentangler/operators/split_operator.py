@@ -174,6 +174,9 @@ class SplitOperator(AbstractOperator):
                 new_shape = Shape(geometry=multi, group_id=0, shape_id=len(self.new_shapes))
                 new_shape.parent_shape = shape
                 new_shape.tag = self.output_tags[0]
+                new_shape.stroke_width = shape.stroke_width
+                new_shape.stroke_color = shape.stroke_color
+                new_shape.fill_color = shape.fill_color
                 self.new_shapes.append(new_shape)
         return
 

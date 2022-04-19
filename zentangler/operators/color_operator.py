@@ -44,7 +44,7 @@ class ColorOperator(AbstractOperator):
         shape_id = 0
 
         for i in range(len(shapes)):
-            new_shape = copy.deepcopy(shapes[i])
+            new_shape = copy.copy(shapes[i])
             new_shape.parent_shape = shapes[i]
             new_shape.tag = output_tags[0]
             new_shape.gid = 0

@@ -1,0 +1,61 @@
+{
+	"grammar_name" : "Test Grammar 2",
+	"seed" : -1,
+	"rules" : [
+		{
+			"rule_name" : "reduce line width",
+			"matching_tags" : ["origin"],
+			"group_id" : 0,
+			"output_tags" : ["origin_skinny"],
+			"operator" : "line_width",
+			"parameters" : {
+				"line_width" : 0.003
+			}
+		},
+		{
+			"rule_name" : "cross split",
+			"matching_tags" : ["origin_skinny"],
+			"group_id" : 0,
+			"output_tags" : ["half_circle"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.05,
+				"cross_split" : false,
+				"line_style" : "HALF_CIRCLE"
+			}
+		},
+
+		{ 
+			"rule_name" : "regroup",
+			"matching_tags" : ["half_circle"],
+			"group_id" : 0,
+			"output_tags" : ["half_circle_1", "half_circle_2"],
+			"operator" : "regroup",
+			"parameters" : {
+				"k" : 2
+			}
+		},
+		{
+			"rule_name" : "colorize",
+			"matching_tags" : ["half_circle_1"],
+			"group_id" : 0,
+			"output_tags" : ["color_circle"],
+			"operator" : "color",
+			"parameters" : {
+				"fill_colors" : [[0.5, 0.5, 1.0], [0.8, 0.8, 1.0]],
+				"fill_color_assignment": "cycle colors"
+			}
+		},
+		{
+			"rule_name" : "split diagonal",
+			"matching_tags" : ["half_circle_2"],
+			"group_id" : 0,
+			"output_tags" : ["d"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.02,
+				"angle" : 45
+			}
+		}
+	]
+}
