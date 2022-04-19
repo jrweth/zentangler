@@ -34,12 +34,13 @@ def add_rules_to_ui(tangle):
     i = 0
     rules = tangle.grammar.rules
 
-    with pm.columnLayout(adjustableColumn=True):
-        pm.text("Tangle Grammar Editor")
+    with pm.scrollLayout():
+        with pm.columnLayout(adjustableColumn=True, height=2000):
+            pm.text("Tangle Grammar Editor")
 
-        for rule in rules:
-            rule_editor.add_grammar_rule_widget(0, i, rule, tangle)     # todo: uv_shell_index
-            i += 1
+            for rule in rules:
+                rule_editor.add_grammar_rule_widget(0, i, rule, tangle)     # todo: uv_shell_index
+                i += 1
 
     pm.setParent(window)
     pm.showWindow(window)
@@ -58,7 +59,7 @@ def refresh_tangle(tangle_info, selectedObj):
     pm.select(selectedObj)
 
 
-def create_tangles_from_selected(base_grammar, uv_type_radios):
+def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout):
     global tangle_info
     global selectedObj
     global tangle
@@ -80,9 +81,10 @@ def create_tangles_from_selected(base_grammar, uv_type_radios):
     image_path = tangle_info.get("png_filename")
     thumbnail_path = image_path.replace(".png", "_thumbnail.png")
 
-    with pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250):
-        tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=256, height=256)
-        pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle, tangle_info, selectedObj))
+    with main_layout:
+        with pm.columnLayout(adjustableColumn=False, rowSpacing=10):
+            tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=256)
+            pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle, tangle_info, selectedObj))
     pm.setParent(window)
     pm.showWindow(window)
 
@@ -108,7 +110,8 @@ def create_tangle_window():
 
     global window
     window = pm.window('CreateZenTangleWindow', title="Create ZenTangle", iconName='ZTangler', widthHeight=(400, 400))
-    with pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250):
+    main_layout = pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250)
+    with main_layout:
         pm.text("Select Object(s) to create the tangle.")
 
         pm.optionMenu(label='Select Grammar: ', changeCommand='')
@@ -122,7 +125,7 @@ def create_tangle_window():
             select=1
         )
 
-        pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type))
+        pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type, main_layout))
     pm.setParent('..')
     pm.showWindow(window)
 
