@@ -17,6 +17,7 @@ class UngroupOperator(AbstractOperator):
         gid = 0
 
         for shape in shapes:
+            self.new_shapes = []
             shape.group_id = gid
             shape.tag = shape.tag
 
@@ -47,6 +48,7 @@ class RegroupOperator(AbstractOperator):
     num_output_tags = 0
 
     def execute(self, shapes: list, output_tags: list) -> list:
+        self.new_shapes = []
         k = self.get_parameter_value("k")
 
         for shape in shapes:

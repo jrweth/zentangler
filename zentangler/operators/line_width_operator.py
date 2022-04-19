@@ -26,6 +26,7 @@ class LineWidthOperator(AbstractOperator):
     ]
 
     def execute(self, shapes: list, output_tags: list) -> list:
+        self.new_shapes = []
         shape_id = 0
 
         for i in range(len(shapes)):

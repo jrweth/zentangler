@@ -39,6 +39,7 @@ class ColorOperator(AbstractOperator):
     ]
 
     def execute(self, shapes: list, output_tags: list) -> list:
+        self.new_shapes = []
         random.seed(self.get_parameter_value("random_seed"))
         shape_id = 0
 

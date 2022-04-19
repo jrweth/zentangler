@@ -97,6 +97,7 @@ class SplitOperator(AbstractOperator):
         AbstractOperator.__init__(self, parameter_values)
 
     def execute(self, shapes: list, output_tags: list) -> list:
+        self.new_shapes = []
         self.split_strip_points = self.build_polygon_strip_points()
         self.output_tags = output_tags
 
