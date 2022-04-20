@@ -69,8 +69,6 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, gram
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     grammar_filename = SCRIPT_DIR + "/../zentangler/grammars/" + grammar_options.get(grammar_picker.getValue())
 
-    print (grammar_picker.getValue())
-    print (grammar_options[grammar_picker.getValue()])
     # make sure we have some objects selected
     selectedObj = pm.ls(sl=True)[0]
 

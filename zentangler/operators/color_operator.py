@@ -35,6 +35,8 @@ class ColorOperator(AbstractOperator):
                           data_type=ParameterDataType.INT,
                           default=1,
                           description="seed for determining random color assignment",
+                          range_start=1,
+                          range_end=1000
                           ),
     ]
 
