@@ -7,6 +7,7 @@ from zentangler.operators.grouping_operator import RegroupOperator
 from zentangler.operators.grouping_operator import UngroupOperator
 from zentangler.operators.color_operator import ColorOperator
 from zentangler.operators.line_width_operator import LineWidthOperator
+from zentangler.operators.place_operator import PlaceOperator
 from zentangler.operators.operator_parameter import ParameterDataType
 import json
 
@@ -99,6 +100,9 @@ class GrammarManager:
 
         if operator_name == "line_width":
             operator = LineWidthOperator(param_values)
+
+        if operator_name == "place":
+            operator = PlaceOperator(param_values)
 
         return operator
 

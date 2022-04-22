@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
 from zentangler.shape import Shape
 from zentangler.svg import SVG
 from zentangler.operators.operator_parameter import OperatorParameter, OperatorParameterValue
@@ -143,3 +143,27 @@ class AbstractOperator(ABC):
             if param.name == parameter_name:
                 return param
         return None
+
+    @staticmethod
+    def convert_to_multipolygon(geometry):
+        """
+        Convert various shapely geometry objects to a MultiPolygon
+        """
+        if geometry:
+            # check out what type of intersection object is returned and extract the polygons from it
+            # Add Polygons
+            if isinstance(geometry, MultiPolygon):
+                return geometry
+
+            # Add all polygons if MultiPolygon
+            elif isinstance(geometry, Polygon):
+                return MultiPolygon([geometry])
+
+            # Add all polygons if GeometryCollection
+            elif isinstance(geometry, GeometryCollection):
+                polygons = []
+                for geo in geometry.geoms:
+                    if isinstance(geo, Polygon):
+                        polygons.append(geo)
+                return MultiPolygon(polygons)
+        return None;
