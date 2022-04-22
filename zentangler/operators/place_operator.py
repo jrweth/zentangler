@@ -112,7 +112,7 @@ class PlaceOperator(AbstractOperator):
                           data_type=ParameterDataType.FLOAT,
                           default=0.1,
                           description="the minimum distance between shapes",
-                          range_start=0.001, range_end=0.5
+                          range_start=0.005, range_end=1.0
                           ),
         OperatorParameter(name="rotation",
                           data_type=ParameterDataType.INT,
@@ -201,9 +201,11 @@ class PlaceOperator(AbstractOperator):
         max_y = bounds[3]
         min_size = self.get_parameter_value("min_size")
         min_distance = self.get_parameter_value("min_distance")
+        grid_size = max(min_distance, min_size)
+
         x_size = max_x - min_x
         y_size = max_y - min_y
-        num_points = 5 * math.ceil((x_size * y_size) / (min_distance * min_distance))
+        num_points = 5 * math.ceil((x_size * y_size) / (grid_size * grid_size))
 
         center_points = set()
         for i in range(num_points):
@@ -221,7 +223,7 @@ class PlaceOperator(AbstractOperator):
         max_y = bounds[3]
         min_dist = self.get_parameter_value("min_distance")
         min_size = self.get_parameter_value("min_size")
-        grid_size = min_dist
+        grid_size = max(min_dist, min_size)
 
         x = min_x
         while x < max_x:
