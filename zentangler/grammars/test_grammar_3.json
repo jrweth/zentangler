@@ -1,0 +1,121 @@
+{
+	"grammar_name" : "Test Grammar 3",
+	"seed" : -1,
+	"rules" : [
+		{
+			"rule_name" : "reduce line width",
+			"matching_tags" : ["origin"],
+			"group_id" : 0,
+			"output_tags" : ["origin_skinny"],
+			"operator" : "line_width",
+			"parameters" : {
+				"line_width" : 0.001
+			}
+		},
+		{
+			"rule_name" : "split",
+			"matching_tags" : ["origin_skinny"],
+			"group_id" : 0,
+			"output_tags" : ["strips"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.2,
+				"cross_split" : false,
+				"line_style" : "CURVED",
+				"line_style_scale_y": 0.01,
+				"angle": 90
+			}
+		},
+		{
+			"rule_name" : "colorize",
+			"matching_tags" : ["strips"],
+			"group_id" : 0,
+			"output_tags" : ["colored_strips"],
+			"operator" : "color",
+			"parameters" : {
+				"fill_color_assignment": "random",
+				"random_seed": 7
+			}
+		},
+		{
+			"rule_name" : "regroup",
+			"matching_tags" : ["colored_strips"],
+			"group_id" : 0,
+			"output_tags" : ["strip1", "strip2", "strip3", "strip4"],
+			"operator" : "regroup",
+			"parameters" : {
+				"k" : 4
+			}
+		},
+		{
+			"rule_name" : "stars",
+			"matching_tags" : ["strip1"],
+			"group_id" : 0,
+			"output_tags" : ["shapes", "remainder"],
+			"operator" : "place",
+			"parameters" : {
+				"shape_type": "star",
+				"min_size": 0.03,
+				"max_size": 0.15,
+				"num_shape_sides": 5,
+				"rotation_random": true,
+				"random_seed": 4
+			}
+		},
+		{
+			"rule_name" : "circles",
+			"matching_tags" : ["strip2"],
+			"group_id" : 0,
+			"output_tags" : ["shapes", "remainder"],
+			"operator" : "place",
+			"parameters" : {
+				"shape_type": "circle",
+				"min_size": 0.03,
+				"max_size": 0.15
+			}
+		},
+		{
+			"rule_name" : "triangles",
+			"matching_tags" : ["strip3"],
+			"group_id" : 0,
+			"output_tags" : ["shapes", "remainder"],
+			"operator" : "place",
+			"parameters" : {
+				"shape_type": "ngon",
+				"placement_type": "random",
+				"min_size": 0.02,
+				"max_size": 0.02,
+				"min_distance": 0.04,
+				"rotation_random": true,
+				"num_shape_sides": 3
+			}
+		},
+		{
+			"rule_name" : "squares",
+			"matching_tags" : ["strip4"],
+			"group_id" : 0,
+			"output_tags" : ["shapes", "remainder"],
+			"operator" : "place",
+			"parameters" : {
+				"shape_type": "ngon",
+				"placement_type": "grid",
+				"min_size": 0.05,
+				"max_size": 0.05,
+				"min_distance": 0.06,
+				"rotation_random": false,
+				"rotation":45,
+				"num_shape_sides": 4
+			}
+		},
+		{
+			"rule_name" : "color shapes",
+			"matching_tags" : ["shapes"],
+			"group_id" : 0,
+			"output_tags" : ["term"],
+			"operator" : "color",
+			"parameters" : {
+				"fill_color_assignment" : "random"
+			}
+		}
+	]
+}

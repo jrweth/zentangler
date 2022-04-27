@@ -15,13 +15,14 @@ class UngroupOperator(AbstractOperator):
 
     def execute(self, shapes: list, output_tags: list) -> list:
         gid = 0
+        self.new_shapes = []
 
         for shape in shapes:
-            self.new_shapes = []
-            shape.group_id = gid
-            shape.tag = shape.tag
+            new_shape = shape.clone()
+            new_shape.group_id = gid
+            new_shape.parent_shape = shape
 
-            self.new_shapes.append(shape)
+            self.new_shapes.append(new_shape)
             gid += 1
 
         return self.new_shapes
@@ -52,9 +53,11 @@ class RegroupOperator(AbstractOperator):
         k = self.get_parameter_value("k")
 
         for shape in shapes:
-            shape.group_id = shape.shape_id % k
-            shape.tag = output_tags[shape.shape_id % k]
-            self.new_shapes.append(shape)
+            new_shape = shape.clone()
+            new_shape.group_id = shape.shape_id % k
+            new_shape.tag = output_tags[shape.shape_id % k]
+            new_shape.parent = shape
+            self.new_shapes.append(new_shape)
 
         return self.new_shapes
 

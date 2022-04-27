@@ -37,5 +37,19 @@ class TestGrammar(unittest.TestCase):
         self.assertEqual(len(tangle.get_last_expansion_shapes()), 291)
 
 
+    def test_grammar_3(self):
+        gm = GrammarManager()
+        grammar = gm.get_grammar((os.path.dirname(SCRIPT_DIR) + "/zentangler/grammars/test_grammar_3.json"))
+
+        tangle = Tangle(grammar=grammar, init_shapes=[SQUARE_SHAPE])
+
+        tangle.create()
+        tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar3.svg')
+
+        # self.assertEqual(len(grammar.rules), 5, "There are 5 grammar rules")
+        # self.assertEqual(len(tangle.grammar.rules), 5, "number of grammar rules is 5")
+        # self.assertEqual(len(tangle.get_last_expansion_shapes()), 291)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -53,5 +53,8 @@ class Shape:
     def clone(self):
         """
         Clone this shape into another shape
+        return: Shape
         """
-        return copy.deepcopy(self)
+        clone = copy.copy(self)
+        clone.geometry = copy.deepcopy(self.geometry)
+        return clone

@@ -16,7 +16,7 @@ tangle_image: image
 grammar_options = {
     "Style1": "test_grammar_1.json",
     "Style2": "test_grammar_2.json",
-    "Style3": "test_grammar_1.json",
+    "Style3": "test_grammar_3.json",
     "Style4": "test_grammar_1.json",
     "Random": "test_grammar_1.json",     # todo: randomize
 }
