@@ -7,19 +7,13 @@ from zentangler.tangle import Tangle
 from zentangler_maya.tangle_creation import create_uv_map_tangle, create_silhouette_tangle
 from zentangler.svg import SVG
 import zentangler_maya.rule_editor as rule_editor
+from zentangler.grammar import BASE_GRAMMARS
 
 window: None
 selectedObj: None
 tangle_info: dict
 tangle: Tangle
 tangle_image: image
-grammar_options = {
-    "Style1": "test_grammar_1.json",
-    "Style2": "test_grammar_2.json",
-    "Style3": "test_grammar_3.json",
-    "Style4": "test_grammar_1.json",
-    "Random": "test_grammar_1.json",     # todo: randomize
-}
 
 '''Paste in Maya Script Editor
 import importlib
@@ -66,8 +60,12 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, gram
     global grammar_options
     global tangle_image
 
-    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    grammar_filename = SCRIPT_DIR + "/../zentangler/grammars/" + grammar_options.get(grammar_picker.getValue())
+    if grammar_picker.getValue() == "random grammar":
+        grammar_filename = None
+    else:
+        for grammar_def in BASE_GRAMMARS:
+            if grammar_def["name"] == grammar_picker.getValue():
+                grammar_filename = grammar_def["path"]
 
     # make sure we have some objects selected
     selectedObj = pm.ls(sl=True)[0]
@@ -90,6 +88,14 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, gram
 
     add_rules_to_ui(tangle)
     pm.select(selectedObj)
+
+def update_selected_grammar(grammar_icon_ui, *args):
+    """
+    update the grammar icon whne a new grammar is selected
+    """
+    for grammar_def in BASE_GRAMMARS:
+        if grammar_def["name"] == args[0]:
+            grammar_icon_ui.setImage(grammar_def["icon_path"])
 
 
 def create_tangle_window():
@@ -114,9 +120,12 @@ def create_tangle_window():
     with main_layout:
         pm.text("Select Object(s) to create the tangle.")
 
-        grammar_picker = pm.optionMenu(label='Select Grammar: ', changeCommand='')
-        for grammar in grammar_options:
-            pm.menuItem(label=grammar)
+        grammar_icon_ui = pm.image(image=BASE_GRAMMARS[0]["icon_path"], backgroundColor=[0.5, 0.5, 0.5], width=100, height=100)
+        grammar_picker = pm.optionMenu(label='Select Grammar: ', changeCommand=pm.CallbackWithArgs(update_selected_grammar, grammar_icon_ui))
+        for grammar in BASE_GRAMMARS:
+            pm.menuItem(label=grammar["name"])
+        pm.menuItem(label="random grammar")
+
 
         pm.text(label="Apply as: ", align="left")
         uv_type = pm.radioButtonGrp(

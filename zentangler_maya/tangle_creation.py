@@ -2,7 +2,7 @@ from zentangler.tangle import Tangle
 from zentangler.grammar_manager import GrammarManager
 from zentangler_maya.texture_generator import TextureGenerator
 from zentangler_maya.uv_shape_generator import UVShapeGenerator
-
+from datetime import datetime
 
 def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=None, assign_texture=False):
     """
@@ -21,11 +21,12 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
   
     """
 
-    print("Grammar filename: " + grammar_filename)
-
     # parse grammar & rules
     grammar_manager = GrammarManager()
-    grammar = grammar_manager.get_grammar(grammar_filename)
+    if grammar_filename is None:
+        grammar = grammar_manager.get_random_base_grammar(datetime.now().timestamp())
+    else:
+        grammar = grammar_manager.get_grammar(grammar_filename)
     
     # create tangle
     tangle = Tangle(initial_shapes, grammar)

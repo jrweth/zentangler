@@ -19,6 +19,7 @@ class TestGrammar(unittest.TestCase):
 
         tangle.create()
         tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar1.svg')
+        tangle.create_last_expansion_png(os.path.dirname(SCRIPT_DIR) + '/zentangler/grammars/test_grammar_1.png', 100)
 
         self.assertEqual(len(tangle.grammar.rules), 3, "number of grammar rules is 3")
         self.assertEqual(len(tangle.get_last_expansion_shapes()), 337)
@@ -31,6 +32,7 @@ class TestGrammar(unittest.TestCase):
 
         tangle.create()
         tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar2.svg')
+        tangle.create_last_expansion_png(os.path.dirname(SCRIPT_DIR) + '/zentangler/grammars/test_grammar_2.png', 100)
 
         self.assertEqual(len(grammar.rules), 5, "There are 5 grammar rules")
         self.assertEqual(len(tangle.grammar.rules), 5, "number of grammar rules is 5")
@@ -45,11 +47,25 @@ class TestGrammar(unittest.TestCase):
 
         tangle.create()
         tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar3.svg')
+        tangle.create_last_expansion_png(os.path.dirname(SCRIPT_DIR) + '/zentangler/grammars/test_grammar_3.png', 100)
 
         # self.assertEqual(len(grammar.rules), 5, "There are 5 grammar rules")
         # self.assertEqual(len(tangle.grammar.rules), 5, "number of grammar rules is 5")
         # self.assertEqual(len(tangle.get_last_expansion_shapes()), 291)
 
+    def test_grammar_random(self):
+        gm = GrammarManager()
+        grammar = gm.get_random_base_grammar()
+
+        tangle = Tangle(grammar=grammar, init_shapes=[SQUARE_SHAPE])
+
+        tangle.create()
+        tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar-random.svg')
+
+        grammar = gm.get_random_base_grammar(53)
+        tangle = Tangle(grammar=grammar, init_shapes=[SQUARE_SHAPE])
+        tangle.create()
+        tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar-random2.svg')
 
 if __name__ == '__main__':
     unittest.main()

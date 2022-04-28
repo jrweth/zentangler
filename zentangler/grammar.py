@@ -1,7 +1,25 @@
+import os
+import random
 from zentangler.operators.grouping_operator import UngroupOperator
 
-from zentangler.rule import Rule
-
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_GRAMMARS = [
+    {
+        "name": "Base Grammar 1",
+        "path": SCRIPT_DIR + "/grammars/test_grammar_1.json",
+        "icon_path": SCRIPT_DIR + "/grammars/test_grammar_1.png",
+    },
+    {
+        "name": "Base Grammar 2",
+        "path": SCRIPT_DIR + "/grammars/test_grammar_2.json",
+        "icon_path": SCRIPT_DIR + "/grammars/test_grammar_2.png",
+    },
+    {
+        "name": "Base Grammar 3",
+        "path": SCRIPT_DIR + "/grammars/test_grammar_3.json",
+        "icon_path": SCRIPT_DIR + "/grammars/test_grammar_3.png",
+    }
+]
 
 class Grammar:
     """
@@ -31,3 +49,6 @@ class Grammar:
     def load_from_string(self, grammar_string):
         op = UngroupOperator()
         self.operators.push(op)
+
+
+
