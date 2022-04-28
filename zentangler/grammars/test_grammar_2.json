@@ -43,7 +43,8 @@
 			"operator" : "color",
 			"parameters" : {
 				"fill_colors" : [[0.5, 0.5, 1.0], [0.8, 0.8, 1.0]],
-				"fill_color_assignment": "cycle colors"
+				"fill_color_assignment": "cycle colors",
+				"line_color_assignment": "single color"
 			}
 		},
 		{
