@@ -42,35 +42,135 @@ SHAPE_TYPES = {
 
 
 class PlacementGrid():
-    def __init__(self, orig_poly, min_distance):
-        self.orig_poly: Polygon = orig_poly
-        self.min_distance = min_distance
+    def __init__(self, orig_poly: MultiPolygon, operator):
+        self.orig_poly = orig_poly
+        self.operator = operator
+        self.min_distance = operator.get_parameter_value("min_distance")
+        self.min_size = operator.get_parameter_value("min_size")
+        self.max_size = operator.get_parameter_value("max_size")
+        self.random_seed = operator.get_parameter_value("random_seed")
+        self.placement_type = operator.get_parameter_value("placement_type")
+        self.grid_voxel_size = max(self.min_size, self.min_distance)
+        # if we have a grid max the voxel size slightly larger
+        if self.placement_type == "grid":
+            self.grid_voxel_size = max(self.min_size, self.min_distance) * 1.00001
+        # else make the voxel size half the size
+        else:
+            self.grid_voxel_size = self.grid_voxel_size / 2
+        # set a hard limit for voxel size
+        if(self.grid_voxel_size < 0.005):
+            self.grid_voxel_size = 0.005
         bounds = orig_poly.bounds
-        self.grid_dim_x = (math.ceil(bounds[2] - bounds[0]) / min_distance)
-        self.grid_dim_y = (math.ceil(bounds[3] - bounds[1]) / min_distance)
+        self.grid_start_x = bounds[0]
+        self.grid_start_y = bounds[1]
+        self.grid_dim_x = math.ceil((bounds[2] - bounds[0]) / self.grid_voxel_size)
+        self.grid_dim_y = math.ceil((bounds[3] - bounds[1]) / self.grid_voxel_size)
+        self.init_grid()
 
     def init_grid(self):
         """
-        Create a grid with each voxel being the min distance totally covering the original shape
+        Create a grid with each voxel being the size of the min distance and totally covering the original shape
         """
         bounds = self.orig_poly.bounds
         x = bounds[0]
-        y = bounds[1]
-        self.grid = []
+        self.voxels_available = []
+        self.voxel_to_index = {}
 
         x_index = 0
-        d = self.min_distance
-        # create a 2 dim array of polygons covering our area
+        d = self.grid_voxel_size
+        # get the set of voxels that lie in the space
         while x < bounds[2]:
-            self.grid.append([])
+            y_index = 0
+            y = bounds[1]
             while y < bounds[3]:
-                self.grid[x_index].append({
-                    "box": Polygon((x, y), (x + d, y), (x + d, y + d), (x, y + d)),
-                    "available": True
-                })
-                y += self.min_distance
-            x += self.min_distance
+                voxel = Polygon([(x, y), (x + d, y), (x + d, y + d), (x, y + d)]);
+                if voxel.difference(self.orig_poly).is_empty:
+                    self.add_voxel((x_index, y_index))
+                y_index += 1
+                y += d
+            x += d
             x_index += 1
+
+        num_voxels = len(self.voxels_available) + 1
+        self.num_iterations = math.ceil(5000 / num_voxels)
+        if self.num_iterations > 100:
+            self.num_iterations = 100
+
+
+    def add_voxel(self, voxel):
+        if voxel in self.voxel_to_index:
+            return
+        self.voxels_available.append(voxel)
+        self.voxel_to_index[voxel] = len(self.voxels_available)-1
+
+    def remove_voxel(self, voxel):
+        position = self.voxel_to_index.pop(voxel)
+        last_item = self.voxels_available.pop()
+        if position != len(self.voxels_available):
+            self.voxels_available[position] = last_item
+            self.voxel_to_index[last_item] = position
+
+    def get_next_position_and_size(self):
+        iterations = 0
+        intersecting_voxels_empty = False
+        while iterations < self.num_iterations and not intersecting_voxels_empty:
+            iterations += 1
+            voxel = random.choice(self.voxels_available)
+            voxel_start_x = self.grid_start_x + voxel[0] * self.grid_voxel_size
+            voxel_start_y = self.grid_start_y + voxel[1] * self.grid_voxel_size
+            if self.placement_type == "grid":
+                x = voxel_start_x + self.grid_voxel_size / 2
+                y = voxel_start_y + self.grid_voxel_size / 2
+            else:
+                x = voxel_start_x + random.uniform(0, 1) * self.grid_voxel_size
+                y = voxel_start_y + random.uniform(0, 1) * self.grid_voxel_size
+            size = random.uniform(self.min_size, self.max_size)
+
+            intersecting_voxels_empty = True
+            intersecting = self.get_intersecting_voxels((x,y), size, None)
+            for v in intersecting:
+                # if we have an intersecting voxel, shrink the size, move toward center and try again
+                if v not in self.voxel_to_index.keys():
+                    intersecting_voxels_empty = False
+                    break
+
+        if intersecting_voxels_empty:
+            for v in intersecting:
+                self.remove_voxel(v)
+            return ((x, y), size)
+        else:
+            self.remove_voxel(voxel)
+            return None
+
+
+
+    def get_positions_and_sizes(self):
+        pos_and_sizes = []
+        while len(self.voxels_available) > 0:
+            pos_and_size = self.get_next_position_and_size()
+            if pos_and_size is not None:
+                pos_and_sizes.append(pos_and_size)
+        return pos_and_sizes
+
+    def get_intersecting_voxels(self, center_point, size, new_poly):
+        # get the start and end voxel index for x axis
+        start_x = center_point[0] - (size / 2)
+        start_voxel_x = math.floor((start_x - self.grid_start_x) / self.grid_voxel_size)
+        end_x = center_point[0] + (size / 2)
+        end_voxel_x = math.floor((end_x - self.grid_start_x) / self.grid_voxel_size)
+
+        #get the start and end voxel index for y axis
+        start_y = center_point[1] - (size / 2)
+        start_voxel_y = math.floor((start_y - self.grid_start_y) / self.grid_voxel_size)
+        end_y = center_point[1] + (size / 2)
+        end_voxel_y = math.floor((end_y - self.grid_start_y) / self.grid_voxel_size)
+
+        intersecting_voxels = []
+        for x_index in range(start_voxel_x, end_voxel_x + 1):
+            for y_index in range(start_voxel_y, end_voxel_y + 1):
+                intersecting_voxels.append((x_index, y_index))
+
+        return intersecting_voxels
 
 
 class PlaceOperator(AbstractOperator):
@@ -100,13 +200,13 @@ class PlaceOperator(AbstractOperator):
                           data_type=ParameterDataType.FLOAT,
                           default=0.1,
                           description="the minimum size that the shape can be",
-                          range_start=0.001, range_end=0.5
+                          range_start=0.005, range_end=0.5
                           ),
         OperatorParameter(name="max_size",
                           data_type=ParameterDataType.FLOAT,
                           default=0.1,
                           description="the maximum size that the shape can be",
-                          range_start=0.001, range_end=0.5
+                          range_start=0.005, range_end=0.5
                           ),
         OperatorParameter(name="min_distance",
                           data_type=ParameterDataType.FLOAT,
@@ -128,7 +228,12 @@ class PlaceOperator(AbstractOperator):
                           ),
         OperatorParameter(name="random_seed", data_type=ParameterDataType.INT, default=1,
                           description="seed for any random elements (e.g. rotation, shape placement)",
-                          range_start=1, range_end=1000)
+                          range_start=1, range_end=1000),
+        OperatorParameter(name="optimized",
+                          data_type=ParameterDataType.BOOL,
+                          default=True,
+                          description="flag to speed up shape placement, results are less dense but speedier",
+                          ),
     ]
 
     def __init__(self, parameterValues):
@@ -142,10 +247,14 @@ class PlaceOperator(AbstractOperator):
         random.seed(self.get_parameter_value("random_seed"))
         shape_id = 0
         remainder_shape_id = 0
+        optimized = self.get_parameter_value("optimized")
 
         for i in range(len(shapes)):
             orig_geometry: MultiPolygon = shapes[i].geometry
-            new_polygons: [Polygon] = self.get_new_polygons(orig_geometry)
+            if optimized:
+                new_polygons: [Polygon] = self.get_new_polygons_optimized(orig_geometry)
+            else:
+                new_polygons: [Polygon] = self.get_new_polygons(orig_geometry)
 
             for new_polygon in new_polygons:
                 orig_geometry = orig_geometry.difference(new_polygon)
@@ -168,6 +277,29 @@ class PlaceOperator(AbstractOperator):
             self.new_shapes.append(new_shape)
 
         return self.new_shapes
+
+    def get_new_polygons_optimized(self, orig_geometry: MultiPolygon):
+        new_polygons = []
+        min_size = self.get_parameter_value("min_size")
+        max_size = self.get_parameter_value("max_size")
+        min_distance = self.get_parameter_value("min_distance")
+        random_seed = self.get_parameter_value("random_seed")
+
+        grid = PlacementGrid(orig_geometry, self)
+        # create the set of voxels that
+        position_and_sizes = grid.get_positions_and_sizes()
+        new_polygons = []
+        for ps in position_and_sizes:
+            size = ps[1]
+            x = ps[0][0]
+            y = ps[0][1]
+            scaled = scale(self.base_shape, xfact=size, yfact=size, origin=(0, 0))
+            rotated = self.rotate_polygon(scaled)
+            poly = translate(rotated, x, y, 0)
+            new_polygons.append(poly)
+
+
+        return new_polygons
 
     def get_new_polygons(self, orig_geometry):
         center_points = self.generate_center_points(orig_geometry)
