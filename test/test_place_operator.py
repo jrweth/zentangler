@@ -29,9 +29,9 @@ class TestPlaceOperator(unittest.TestCase):
         """
         shape: Shape = SQUARE_SHAPE.clone()
         param_values = [
-            OperatorParameterValue("min_size", 0.1),
-            OperatorParameterValue("max_size", 0.1),
-            OperatorParameterValue("min_distance", 0.1),
+            OperatorParameterValue("min_size", 0.01),
+            OperatorParameterValue("max_size", 0.3),
+            OperatorParameterValue("min_distance", 0.01),
             OperatorParameterValue("random_seed", 2),
             OperatorParameterValue("shape_type", "circle"),
             OperatorParameterValue("num_shape_sides", 5),

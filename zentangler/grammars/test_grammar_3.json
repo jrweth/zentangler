@@ -59,7 +59,8 @@
 				"max_size": 0.15,
 				"num_shape_sides": 5,
 				"rotation_random": true,
-				"random_seed": 4
+				"random_seed": 4,
+				"optimized": false
 			}
 		},
 		{
@@ -101,7 +102,7 @@
 				"placement_type": "grid",
 				"min_size": 0.05,
 				"max_size": 0.05,
-				"min_distance": 0.06,
+				"min_distance": 0.05,
 				"rotation_random": false,
 				"rotation":45,
 				"num_shape_sides": 4
