@@ -5,7 +5,7 @@ from zentangler.operators.operator_parameter import OperatorParameterValue as OP
 from zentangler.operators.operator_parameter import ParameterDataType
 from zentangler.rule import Rule
 from zentangler.tangle import Tangle
-from zentangler_maya.color_picker import color_button, update_color_buttons
+
 
 """
 import sys
@@ -44,6 +44,7 @@ def param_value_changed(uv_shell_index, rule_index, param_name, tangle, *args):
 
 
 def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tangle):
+    from zentangler_maya.color_picker import color_button, update_color_buttons
     global icon_images
     LINE_STYLE = ["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"]
     rules.append(rule)
