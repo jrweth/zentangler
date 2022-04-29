@@ -1,4 +1,4 @@
-from zentangler.grammar import Grammar
+from zentangler.grammar import Grammar, BASE_GRAMMARS
 from zentangler.rule import Rule
 from zentangler.operators.abstract_operator import AbstractOperator
 from zentangler.operators.split_operator import SplitOperator
@@ -10,6 +10,7 @@ from zentangler.operators.line_width_operator import LineWidthOperator
 from zentangler.operators.place_operator import PlaceOperator
 from zentangler.operators.operator_parameter import ParameterDataType
 import json
+import random
 
 class GrammarManager:
     """
@@ -105,6 +106,12 @@ class GrammarManager:
             operator = PlaceOperator(param_values)
 
         return operator
+
+    def get_random_base_grammar(self, random_seed=1):
+        random.seed(random_seed)
+        base_grammar_index = random.randint(0, len(BASE_GRAMMARS)-1)
+        base_grammar_def = BASE_GRAMMARS[base_grammar_index]
+        return self.get_grammar(base_grammar_def["path"])
 
     def adjust_param_value_for_datatype(self, operator: AbstractOperator, param_name: str, param_value):
         """

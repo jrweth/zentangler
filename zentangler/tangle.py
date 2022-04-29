@@ -93,7 +93,7 @@ class Tangle:
         last_expansion = self.history[-1]
         last_expansion.createExpansionSVG(svg_filename)
 
-    def create_last_expansion_png(self, png_filename):
+    def create_last_expansion_png(self, png_filename, resolution: int = 1024):
         """
         function to output the last expansion to a png
         Parameters:
@@ -101,7 +101,7 @@ class Tangle:
                 name of the png file (should end in .png)
         """
         last_expansion = self.history[-1]
-        last_expansion.createExpansionPNG(png_filename)
+        last_expansion.createExpansionPNG(png_filename, resolution)
 
     def update_rule_parameter(self, rule_id: int, parameterValue: OperatorParameterValue):
         """
