@@ -6,6 +6,7 @@ from zentangler.operators.operator_parameter import ParameterDataType
 from zentangler.rule import Rule
 from zentangler.tangle import Tangle
 
+
 """
 import sys
 # This should be the path your PyCharm installation
@@ -43,6 +44,7 @@ def param_value_changed(uv_shell_index, rule_index, param_name, tangle, *args):
 
 
 def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tangle):
+    from zentangler_maya.color_picker import color_button, update_color_buttons
     global icon_images
     LINE_STYLE = ["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"]
     rules.append(rule)
@@ -52,7 +54,7 @@ def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tang
         icon_images[image_path] = pm.image(image=image_path, backgroundColor=[0.5, 0.5, 0.5], width=100, height=100)
         make_operator_icon(rule, "obj1", uv_shell_index, rule_index)
         for param in rule.operator.parameters:
-            with pm.gridLayout(numberOfColumns=2, cellWidth=150, cellHeight=15):
+            with pm.rowLayout(numberOfColumns=2, columnWidth2=[100, 100]):
                 pm.text(param.name)
                 value = rule.operator.get_parameter_value(param.name)
 
@@ -80,6 +82,12 @@ def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tang
                     for style in LINE_STYLE:
                         pm.menuItem(label=style)
 
+                if param.data_type == ParameterDataType.RGB_COLOR:
+                    color_layout = pm.columnLayout()
+                    if param.is_multiple == True:
+                        update_color_buttons(uv_shell_index, rule_index, tangle, param.name, color_layout)
+                    else:
+                        color_button(uv_shell_index, rule_index, param.name, tangle, -1, value, color_layout)
                     # for style in LINE_STYLE:
                     #     index += 1
                     #     if style == value:
