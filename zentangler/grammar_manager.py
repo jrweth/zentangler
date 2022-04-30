@@ -107,7 +107,7 @@ class GrammarManager:
 
         return operator
 
-    def get_random_base_grammar(self, random_seed=1):
+    def get_random_base_grammar(self, random_seed:int = 1):
         random.seed(random_seed)
         base_grammar_index = random.randint(0, len(BASE_GRAMMARS)-1)
         base_grammar_def = BASE_GRAMMARS[base_grammar_index]
