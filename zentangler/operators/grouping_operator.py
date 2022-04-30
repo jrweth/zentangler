@@ -43,14 +43,20 @@ class UngroupOperator(AbstractOperator):
 class RegroupOperator(AbstractOperator):
 
     parameters = [
-        OperatorParameter(name="k", data_type=ParameterDataType.INT, default=2,
-                          description="number of groups", range_start=2, range_end=10),
+        # OperatorParameter(name="k", data_type=ParameterDataType.INT, default=2,
+        #                   description="number of groups", range_start=2, range_end=10),
+        OperatorParameter(name="output_tags", data_type=ParameterDataType.LIST, default=["tag1"],
+                          description="tags for grouping"),
     ]
     num_output_tags = 0
 
     def execute(self, shapes: list, output_tags: list) -> list:
         self.new_shapes = []
-        k = self.get_parameter_value("k")
+
+        # k = self.get_parameter_value("k")
+        k = len(self.get_parameter_value("output_tags"))
+
+        output_tags = self.get_parameter_value("output_tags")
 
         for shape in shapes:
             new_shape = shape.clone()

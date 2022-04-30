@@ -1,4 +1,6 @@
 from enum import Enum
+
+
 class ParameterDataType(Enum):
     """
     parameter data type for operators
@@ -8,6 +10,8 @@ class ParameterDataType(Enum):
     FLOAT = 3
     BOOL = 4
     RGB_COLOR = 5
+    LIST = 6
+
 
 class OperatorParameter:
     """
@@ -19,7 +23,7 @@ class OperatorParameter:
                  data_type: ParameterDataType,
                  default,
                  description: str,
-                 options: list = [],
+                 options=None,
                  range_start=None,
                  range_end=None,
                  is_multiple=False
@@ -50,10 +54,15 @@ class OperatorParameter:
         self.data_type = data_type
         self.default = default
         self.description = description
-        self.options = options
         self.range_start = range_start
         self.range_end = range_end
         self.is_multiple = is_multiple
+
+        # self.options = options
+        self.options = []
+        if options is not None:
+            for o in options:
+                self.options.append(o)
 
 
 class OperatorParameterValue:

@@ -18,10 +18,10 @@
 			"rule_name" : "regroup",
 			"matching_tags" : ["a"],
 			"group_id" : 0,
-			"output_tags" : ["b", "c"],
+			"output_tags" : [],
 			"operator" : "regroup",
 			"parameters" : {
-				"k" : 2
+				"output_tags" : ["b","c"]
 			}
 		}, 
 		{ 

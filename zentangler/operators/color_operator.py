@@ -23,13 +23,13 @@ class ColorOperator(AbstractOperator):
                           data_type=ParameterDataType.STRING,
                           default="retain existing",
                           description="the strategy for assigning the line color",
-                          options=["retain existing", "single color", "cycle colors", "random"]
+                          options=["Retain existing", "Single color", "Cycle colors", "Random"]
                           ),
         OperatorParameter(name="fill_color_assignment",
                           data_type=ParameterDataType.STRING,
                           default="retain existing",
                           description="the strategy for assigning the fill color",
-                          options=["retain existing", "single color", "cycle colors", "random"]
+                          options=["Retain existing", "Single color", "Cycle colors", "Random"]
                           ),
         OperatorParameter(name="random_seed",
                           data_type=ParameterDataType.INT,
