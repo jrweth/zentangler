@@ -90,7 +90,7 @@ class Expansion:
             svg.add_shape(shape)
         svg.save_svg()
 
-    def createExpansionPNG(self, png_filename):
+    def createExpansionPNG(self, png_filename, resolution: int = 1024):
         """
         create an PNG file based upon the calculated shapes in this expansion
 
@@ -103,6 +103,6 @@ class Expansion:
         svg = SVG(svg_filename)
         for shape in self.getShapesForNewExpansion():
             svg.add_shape(shape)
-        svg.save_png(png_filename)
+        svg.save_png(png_filename, resolution)
 
 

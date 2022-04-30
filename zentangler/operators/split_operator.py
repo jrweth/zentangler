@@ -75,19 +75,19 @@ class SplitOperator(AbstractOperator):
     num_output_tags: int = 1
     parameters = [
         OperatorParameter(name="width", data_type=ParameterDataType.FLOAT, default=0.1,
-                          description="width of the split"),
+                          description="width of the split", range_start=0.01, range_end=0.8),
         OperatorParameter(name="angle", data_type=ParameterDataType.FLOAT, default=0.0,
-                          description="angle of the split lines in degrees (-90 to 90)"),
+                          description="angle of the split lines in degrees (-90 to 90)", range_start=-90, range_end=90),
         OperatorParameter(name="cross_split", data_type=ParameterDataType.BOOL, default=False,
                           description="if the split should be split along both x and y axis"),
         OperatorParameter(name="line_style", data_type=ParameterDataType.STRING, default="STRAIGHT",
                           description="the type of line style to create the splits"),
         OperatorParameter(name="line_style_scale_x", data_type=ParameterDataType.FLOAT, default=0.1,
-                          description="how much the line style is scaled along the x axis"),
+                          description="how much the line style is scaled along the x axis", range_start=0.001, range_end=1.0),
         OperatorParameter(name="line_style_scale_y", data_type=ParameterDataType.FLOAT, default=0.1,
-                          description="how much the line style is scaled along the y axis"),
+                          description="how much the line style is scaled along the y axis", range_start=0.001, range_end=1.0),
         OperatorParameter(name="random_seed", data_type=ParameterDataType.INT, default=1,
-                          description="seed for any random elements (eg. noise line)")
+                          description="seed for any random elements (eg. noise line)", range_start=1, range_end=1000)
     ]
 
     def __init__(self, parameter_values: list):
@@ -97,6 +97,7 @@ class SplitOperator(AbstractOperator):
         AbstractOperator.__init__(self, parameter_values)
 
     def execute(self, shapes: list, output_tags: list) -> list:
+        self.new_shapes = []
         self.split_strip_points = self.build_polygon_strip_points()
         self.output_tags = output_tags
 
@@ -111,7 +112,8 @@ class SplitOperator(AbstractOperator):
             self.new_shapes = []
 
             # set the new angle
-            new_angle = self.get_parameter_value("angle") - 90
+            angle = self.get_parameter_value("angle")
+            new_angle = angle - 90
             if new_angle < -90:
                 new_angle += 180
             self.set_parameter_value(OperatorParameterValue(name="angle", value=new_angle))
@@ -119,6 +121,8 @@ class SplitOperator(AbstractOperator):
             # rerun
             for shape in second_pass_shapes:
                 self.split_shape(shape)
+
+            self.set_parameter_value(OperatorParameterValue(name="angle", value=angle))
 
         return self.new_shapes
 
@@ -170,6 +174,9 @@ class SplitOperator(AbstractOperator):
                 new_shape = Shape(geometry=multi, group_id=0, shape_id=len(self.new_shapes))
                 new_shape.parent_shape = shape
                 new_shape.tag = self.output_tags[0]
+                new_shape.stroke_width = shape.stroke_width
+                new_shape.stroke_color = shape.stroke_color
+                new_shape.fill_color = shape.fill_color
                 self.new_shapes.append(new_shape)
         return
 

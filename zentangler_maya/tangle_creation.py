@@ -2,7 +2,7 @@ from zentangler.tangle import Tangle
 from zentangler.grammar_manager import GrammarManager
 from zentangler_maya.texture_generator import TextureGenerator
 from zentangler_maya.uv_shape_generator import UVShapeGenerator
-
+from datetime import datetime
 
 def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=None, assign_texture=False):
     """
@@ -20,10 +20,13 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
             flag indicating if the texture should be assigned to the object once created
   
     """
-    
+
     # parse grammar & rules
     grammar_manager = GrammarManager()
-    grammar = grammar_manager.get_grammar(grammar_filename)
+    if grammar_filename is None:
+        grammar = grammar_manager.get_random_base_grammar(datetime.now().timestamp())
+    else:
+        grammar = grammar_manager.get_grammar(grammar_filename)
     
     # create tangle
     tangle = Tangle(initial_shapes, grammar)
@@ -32,6 +35,13 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
     # create texture
     texture_gen = TextureGenerator(obj, tangle.history[-1].getShapesForNewExpansion(), override_png_filename)
     texture_gen.create_texture_file()
+
+    #create the thumbnail
+    filename = texture_gen.get_texture_file_name("png")
+    thumbnail_filename = filename.replace(".png", "_thumbnail.png")
+    texture_gen.override_png_filename = thumbnail_filename
+    texture_gen.create_texture_file(256)
+    texture_gen.override_png_filename = None
 
     # assign texture if required
     if assign_texture:

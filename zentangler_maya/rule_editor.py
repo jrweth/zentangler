@@ -4,6 +4,8 @@ from zentangler.operators.outline_operator import OutlineOperator
 from zentangler.operators.operator_parameter import OperatorParameterValue as OPV
 from zentangler.operators.operator_parameter import ParameterDataType
 from zentangler.rule import Rule
+from zentangler.tangle import Tangle
+
 
 """
 import sys
@@ -18,26 +20,8 @@ pydevd.stoptrace()
 pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True, suspend=False)
 """
 
-rule1 = Rule()
-rule1.name = "Rule 1 - Split"
-rule1.matching_tags = ["origin"]
-rule1.group_id = -1
-rule1.output_tags = ["origin_split"]
-rule1.parameters = []
-rule1.operator = SplitOperator(rule1.parameters)
 icon_images = {"switch": ""}
-
-rule2 = Rule()
-rule2.name = "Rule 2 - Outline"
-rule2.matching_tags = ["origin"]
-rule2.group_id = -1
-rule2.output_tags = ["outline", "remainder"]
-rule2.parameters = []
-rule2.operator = OutlineOperator(rule1.parameters)
-icon_images = {"switch": ""}
-rules = [rule1, rule2]
-
-
+rules = []
 def get_rule_image_filename(object_name, uv_shell_index, rule_index):
     zentangle_path = str(pm.workspace.getPath() + "/zentangler/")
     filename = zentangle_path + "_rule_" + object_name + "_" + str(uv_shell_index) + "_" + str(rule_index) + ".png"
@@ -53,44 +37,68 @@ def make_operator_icon(rule, object_name, uv_shell_index, rule_index):
     pm.refresh()
 
 
-def param_value_changed(uv_shell_index, rule_index, param_name, *args):
-    global rules
-    parameter = OPV(param_name, args[0])
-    rules[rule_index].operator.set_parameter_value(parameter)
-    make_operator_icon(rules[rule_index], "obj1", uv_shell_index, rule_index)
+def param_value_changed(uv_shell_index, rule_index, param_name, tangle, *args):
+    parameterValue = OPV(param_name, args[0])
+    tangle.update_rule_parameter(rule_index, parameterValue)
+    make_operator_icon(tangle.grammar.rules[rule_index], "obj1", uv_shell_index, rule_index)
 
 
-def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule):
+def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tangle):
+    from zentangler_maya.color_picker import color_button, update_color_buttons
     global icon_images
+    LINE_STYLE = ["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"]
+    rules.append(rule)
+
     with pm.frameLayout(label=rule.name, collapsable=True, collapse=True):
         image_path = get_rule_image_filename("obj1", uv_shell_index, rule_index)
         icon_images[image_path] = pm.image(image=image_path, backgroundColor=[0.5, 0.5, 0.5], width=100, height=100)
         make_operator_icon(rule, "obj1", uv_shell_index, rule_index)
         for param in rule.operator.parameters:
-            with pm.gridLayout(numberOfColumns=2, cellWidth=100, cellHeight=15):
+            with pm.rowLayout(numberOfColumns=2, columnWidth2=[100, 100]):
                 pm.text(param.name)
-                param_name = param.name
                 value = rule.operator.get_parameter_value(param.name)
 
                 if param.data_type == ParameterDataType.INT:
-                    pm.intField(value=value,
+                    pm.intSlider(value=value,
                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                  param.name))
+                                                                  param.name, tangle),
+                                min=param.range_start, max=param.range_end, step=1)
 
                 if param.data_type == ParameterDataType.FLOAT:
-                    pm.floatField(value=value,
+                    pm.floatSlider(value=value,
                                   changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                    param.name))
+                                                                    param.name, tangle),
+                                  min=param.range_start, max=param.range_end, step=0.01)
 
                 if param.data_type == ParameterDataType.BOOL:
                     pm.checkBox(value=value,
                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                  param.name))
+                                                                  param.name, tangle))
 
-                if param.data_type == ParameterDataType.STRING:
-                    pm.textField(text=value,
-                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                   param.name))
+                if param.data_type == ParameterDataType.STRING and param.name == "line_style":
+                    styles_menu = pm.optionMenu(changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index,
+                                                                                  rule_index, param.name, tangle))
+                    index = 0
+                    for style in LINE_STYLE:
+                        pm.menuItem(label=style)
+
+                if param.data_type == ParameterDataType.RGB_COLOR:
+                    color_layout = pm.columnLayout()
+                    if param.is_multiple == True:
+                        update_color_buttons(uv_shell_index, rule_index, tangle, param.name, color_layout)
+                    else:
+                        color_button(uv_shell_index, rule_index, param.name, tangle, -1, value, color_layout)
+                    # for style in LINE_STYLE:
+                    #     index += 1
+                    #     if style == value:
+                    #         pm.optionMenu(styles_menu, select=index)
+
+                    # pm.optionMenu(styles_menu, value=value)
+
+                # if param.data_type == ParameterDataType.STRING:
+                #     pm.textField(text=value,
+                #                  changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
+                #                                                    param.name))
 
 
 # Make a new window

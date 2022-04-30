@@ -8,6 +8,8 @@ class ColorOperator(AbstractOperator):
     operator to change the line and/or fill color of a given shape
     """
 
+    num_output_tags = 1
+
     parameters = [
         OperatorParameter(name="line_colors", data_type=ParameterDataType.RGB_COLOR, default=[(0, 0, 0)],
                           description="the color(s) to assign to the shape lines",
@@ -33,15 +35,18 @@ class ColorOperator(AbstractOperator):
                           data_type=ParameterDataType.INT,
                           default=1,
                           description="seed for determining random color assignment",
+                          range_start=1,
+                          range_end=1000
                           ),
     ]
 
     def execute(self, shapes: list, output_tags: list) -> list:
+        self.new_shapes = []
         random.seed(self.get_parameter_value("random_seed"))
         shape_id = 0
 
         for i in range(len(shapes)):
-            new_shape = copy.deepcopy(shapes[i])
+            new_shape = copy.copy(shapes[i])
             new_shape.parent_shape = shapes[i]
             new_shape.tag = output_tags[0]
             new_shape.gid = 0
@@ -70,4 +75,5 @@ class ColorOperator(AbstractOperator):
 
         return self.new_shapes
 
-
+    def create_thumbnail(self, png_filename: str):
+        return self.create_thumbnail_grid(png_filename)

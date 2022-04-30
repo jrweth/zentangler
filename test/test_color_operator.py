@@ -103,5 +103,15 @@ class TestColorOperator(unittest.TestCase):
         # self.assertEqual(new_shapes[1].fill_color[2], 1, "green fill value matches")
         self.assertEqual(new_shapes[0].tag, 'colored', "new tag matches")
 
+    def test_thumbnail(self):
+        param_values = [
+            OperatorParameterValue("line_colors", [(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0)]),
+            OperatorParameterValue("fill_colors", [(0, 0, 1), (1, 0, 0), (0, 1, 0), (1, 1, 0)]),
+            OperatorParameterValue("fill_color_assignment", "cycle colors")
+        ]
+        operator = ColorOperator(param_values)
+        png_filename = SCRIPT_DIR + '/results/test-color-operator-thumbnail.png'
+        operator.create_thumbnail(png_filename)
+
 if __name__ == '__main__':
     unittest.main()

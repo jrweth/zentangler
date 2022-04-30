@@ -3,8 +3,7 @@ from math import floor
 from svgwrite import Drawing
 from svgwrite.path import Path
 from zentangler.shape import Shape
-from svglib.svglib import svg2rlg
-from reportlab.graphics import renderPM
+import subprocess
 
 class SVG:
     """
@@ -57,6 +56,22 @@ class SVG:
 
     def save_png(self, png_filename, resolution: int = 1024):
         self.save_svg()
-
-        drawing = svg2rlg(self.filename)
-        renderPM.drawToFile(drawing, 'output/ice.png', fmt='PNG')
+        inkscape_path = '/opt/local/bin/inkscape'
+        #
+        # # this wasn't working when calling from maya so
+        # # try:
+        # #     inkscape_path = subprocess.check_output(["which", "inkscape"]).strip()
+        # # except subprocess.CalledProcessError:
+        # #     print("ERROR: You need inkscape installed to use this script.")
+        # #     exit(1)
+        #
+        args = [
+            inkscape_path,
+            "--without-gui",
+            "-f", self.filename,
+            "--export-area-page",
+            "-w", str(resolution),
+            "-h", str(resolution),
+            "--export-png=" + png_filename
+        ]
+        subprocess.run(args)

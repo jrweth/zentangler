@@ -1,61 +1,71 @@
 import pymel.core as pm
+from pymel.core.windows import image
 import os
 import sys
 
 from zentangler.tangle import Tangle
 from zentangler_maya.tangle_creation import create_uv_map_tangle, create_silhouette_tangle
+from zentangler.svg import SVG
 import zentangler_maya.rule_editor as rule_editor
-
+from zentangler.grammar import BASE_GRAMMARS
 
 window: None
 selectedObj: None
 tangle_info: dict
 tangle: Tangle
+tangle_image: image
+
+'''Paste in Maya Script Editor
+import importlib
+from zentangler_maya import rule_editor
+from zentangler_maya import maya_menu
+importlib.reload(maya_menu)
+importlib.reload(rule_editor)
+'''
 
 
-def add_rules_to_ui():
-    global tangle
+def add_rules_to_ui(tangle):
     i = 0
     rules = tangle.grammar.rules
 
-    with pm.columnLayout(adjustableColumn=True):
-        pm.text("2")
-    pm.setParent(window)
-    pm.showWindow(window)
+    with pm.scrollLayout():
+        with pm.columnLayout(adjustableColumn=True, height=2000):
+            pm.text("Tangle Grammar Editor")
 
-    with pm.columnLayout(adjustableColumn=True):
-        pm.text("Tangle Grammar Editor")
-
-        for rule in rules:
-            rule_editor.add_grammar_rule_widget(0, i, rule)     # todo: uv_shell_index
-            i += 1
+            for rule in rules:
+                rule_editor.add_grammar_rule_widget(0, i, rule, tangle)     # todo: uv_shell_index
+                i += 1
 
     pm.setParent(window)
     pm.showWindow(window)
 
+def refresh_tangle(tangle_info, selectedObj):
+    tangle_info['tangle'].create()
+    png_path = tangle_info['png_filename']
+    svg_path = png_path.replace(".png", ".svg")
+    thumbnail_path = png_path.replace(".png", "_thumbnail.png")
+    svg = SVG(svg_path)
+    for shape in tangle.history[-1].getShapesForNewExpansion():
+        svg.add_shape(shape)
+    svg.save_png(png_path, 1024)
+    svg.save_png(thumbnail_path, 256)
+    tangle_image.setImage(thumbnail_path)
+    pm.select(selectedObj)
 
-def create_tangles_from_selected(grammar_list, uv_type_radios):
+
+def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, grammar_picker):
     global tangle_info
     global selectedObj
     global tangle
+    global grammar_options
+    global tangle_image
 
-    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-    base_grammar = pm.textScrollList(grammar_list, q=True, si=True)[0]
-    grammar_filename = None
-    # grammar_file_path = pm.workspace.getPath() + "/zentangler/grammars/"
-    grammar_file_path = SCRIPT_DIR + "/../zentangler/grammars/"
-
-    if base_grammar == "Style1":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    if base_grammar == "Style2":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    if base_grammar == "Style3":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    if base_grammar == "Style4":
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
-    elif base_grammar == "Random":      # todo: randomize
-        grammar_filename = grammar_file_path + "test_grammar_1.json"
+    if grammar_picker.getValue() == "random grammar":
+        grammar_filename = None
+    else:
+        for grammar_def in BASE_GRAMMARS:
+            if grammar_def["name"] == grammar_picker.getValue():
+                grammar_filename = grammar_def["path"]
 
     # make sure we have some objects selected
     selectedObj = pm.ls(sl=True)[0]
@@ -66,18 +76,31 @@ def create_tangles_from_selected(grammar_list, uv_type_radios):
         tangle_info = create_silhouette_tangle(selectedObj, grammar_filename=grammar_filename)
 
     tangle = tangle_info.get("tangle")
+    image_path = tangle_info.get("png_filename")
+    thumbnail_path = image_path.replace(".png", "_thumbnail.png")
 
-    # with pm.columnLayout(adjustableColumn=True):
-    #     pm.text("1")
-    # pm.setParent(window)
-    # pm.showWindow(window)
+    with main_layout:
+        with pm.columnLayout(adjustableColumn=False, rowSpacing=10):
+            tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=256)
+            pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle, tangle_info, selectedObj))
+    pm.setParent(window)
+    pm.showWindow(window)
 
-    add_rules_to_ui()
+    add_rules_to_ui(tangle)
+    pm.select(selectedObj)
+
+def update_selected_grammar(grammar_icon_ui, *args):
+    """
+    update the grammar icon whne a new grammar is selected
+    """
+    for grammar_def in BASE_GRAMMARS:
+        if grammar_def["name"] == args[0]:
+            grammar_icon_ui.setImage(grammar_def["icon_path"])
 
 
 def create_tangle_window():
     '''Remote Debug Connection Code'''
-    # # This should be the path your PyCharm installation
+    # # # This should be the path your PyCharm installation
     # pydevd_egg = r"/Applications/PyCharm.app/Contents/debug-eggs/pycharm-debug.egg"
     # if not pydevd_egg in sys.path:
     #     sys.path.append(pydevd_egg)
@@ -93,25 +116,25 @@ def create_tangle_window():
 
     global window
     window = pm.window('CreateZenTangleWindow', title="Create ZenTangle", iconName='ZTangler', widthHeight=(400, 400))
-    with pm.scrollLayout():
-        with pm.columnLayout(adjustableColumn=True):
-            pm.text("Select Object(s) to create the tangle")
-            # with pm.gridLayout(numberOfColumns=2, cellWidth=100, cellHeight=40):
-            pm.text(label="Base Tangle Rules: ", align="left")
-            grammar = pm.textScrollList(
-                append=["Random", "Style1", "Style2", "Style3", "Style4"],
-                selectItem="Random",
-                height=80
-            )
-            pm.text(label="Apply as: ", align="left")
-            uv_type = pm.radioButtonGrp(
-                labelArray2=["current uv map", "silhouette"],
-                numberOfRadioButtons=2,
-                select=1
-            )
-        # cmds.textScrollList( s, q=True, si=True )
+    main_layout = pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250)
+    with main_layout:
+        pm.text("Select Object(s) to create the tangle.")
 
-        pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type))
+        grammar_icon_ui = pm.image(image=BASE_GRAMMARS[0]["icon_path"], backgroundColor=[0.5, 0.5, 0.5], width=100, height=100)
+        grammar_picker = pm.optionMenu(label='Select Grammar: ', changeCommand=pm.CallbackWithArgs(update_selected_grammar, grammar_icon_ui))
+        for grammar in BASE_GRAMMARS:
+            pm.menuItem(label=grammar["name"])
+        pm.menuItem(label="random grammar")
+
+
+        pm.text(label="Apply as: ", align="left")
+        uv_type = pm.radioButtonGrp(
+            labelArray2=["Current UV Map", "Scene Silhouette"],
+            numberOfRadioButtons=2,
+            select=1
+        )
+
+        pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type, main_layout, grammar_picker))
     pm.setParent('..')
     pm.showWindow(window)
 
@@ -126,10 +149,6 @@ def add_zentangler_menu():
                    parent=g_main_window,
                    tearOff=True,
                    allowOptionBoxes=True
-
-                   # familyImage = familyImage,
-                   # mnemonic = 'alfred',
-                   # helpMenu = True,
                    )
 
     pm.menuItem(l='Create', p=menu, c=pm.Callback(create_tangle_window))
