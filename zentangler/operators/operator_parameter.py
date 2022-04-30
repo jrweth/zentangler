@@ -10,7 +10,7 @@ class ParameterDataType(Enum):
     FLOAT = 3
     BOOL = 4
     RGB_COLOR = 5
-    OPTIONS = 6
+    LIST = 6
 
 
 class OperatorParameter:

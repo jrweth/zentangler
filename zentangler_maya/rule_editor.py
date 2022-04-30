@@ -39,7 +39,14 @@ def make_operator_icon(rule, object_name, uv_shell_index, rule_index):
 
 
 def param_value_changed(uv_shell_index, rule_index, param_name, tangle, *args):
-    parameterValue = OPV(param_name, args[0])
+    param_value = args[0]
+
+    if param_name == "output_tags":
+        param_value = param_value[param_value.find("[")+1:param_value.find("]")]
+        param_value = param_value.replace(" ", "").replace("\"", "").replace("\'", "")
+        param_value = list(param_value.split(","))
+
+    parameterValue = OPV(param_name, param_value)
     tangle.update_rule_parameter(rule_index, parameterValue)
     make_operator_icon(tangle.grammar.rules[rule_index], "obj1", uv_shell_index, rule_index)
 
@@ -102,10 +109,11 @@ def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tang
 
                     # pm.optionMenu(styles_menu, value=value)
 
-                # if param.data_type == ParameterDataType.STRING:
-                #     pm.textField(text=value,
-                #                  changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                #                                                    param.name))
+                elif param.data_type == ParameterDataType.LIST:
+                    text_str = "[" + ', '.join(f'"{v}"' for v in value) + "]"
+                    pm.textField(text=text_str,
+                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index,
+                                                                   rule_index, param.name, tangle))
 
 
 # Make a new window

@@ -38,7 +38,7 @@ def main():
     tangle_shapes = tangle.create()
 
     # use shapes to create SVG
-    svg = SVG(SCRIPT_DIR + '/results/test-1.svg')
+    svg = SVG(SCRIPT_DIR + '/results/test-2.svg')
     for shape in tangle_shapes:
         svg.add_shape(shape)
     svg.save_svg()

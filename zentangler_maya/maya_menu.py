@@ -80,6 +80,7 @@ def refresh_tangle(tangle_info, selectedObj):
 def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, grammar_picker):
     global tangle_info
     global selectedObj
+    selected_objs = []
     global tangle
     global grammar_options
     global tangle_image
@@ -96,7 +97,19 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, gram
                 grammar_filename = grammar_def["path"]
 
     # make sure we have some objects selected
-    selectedObj = pm.ls(sl=True)[0]
+    # selectedObj = pm.ls(sl=True)[0]
+    selected_objs = pm.ls(sl=True)
+    if len(selected_objs) > 0:
+        selectedObj = selected_objs[0]
+    else:
+        # pm.promptDialog(
+        #     title='Warning',
+        #     message='No object selected! Please select an object before trying to create a tangle.',
+        #     button=['OK'],
+        #     defaultButton='OK')
+        pm.confirmDialog(title='No object selected!', message='Please select an object before trying to create a tangle.', button=['OK'], defaultButton='OK')
+
+        return
 
     if uv_type_radios.getSelect() == 1:
         tangle_info = create_uv_map_tangle(selectedObj, grammar_filename=grammar_filename)
@@ -108,7 +121,7 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, gram
     add_tangle_to_ui(main_layout)
 
     if not tangle_already_created:
-        tangle_already_created = True;
+        tangle_already_created = True
 
     pm.select(selectedObj)
 
@@ -123,15 +136,15 @@ def update_selected_grammar(grammar_icon_ui, *args):
 
 def create_tangle_window():
     '''Remote Debug Connection Code'''
-    # # This should be the path your PyCharm installation
-    # pydevd_egg = r"/Applications/PyCharm.app/Contents/debug-eggs/pycharm-debug.egg"
-    # if not pydevd_egg in sys.path:
-    #     sys.path.append(pydevd_egg)
-    # import pydevd
-    # # This clears out any previous connection in case you restarted the debugger from PyCharm
-    # pydevd.stoptrace()
-    # # 9001 matches the port number that I specified in my configuration
-    # pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True, suspend=False)
+    # This should be the path your PyCharm installation
+    pydevd_egg = r"/Applications/PyCharm.app/Contents/debug-eggs/pycharm-debug.egg"
+    if not pydevd_egg in sys.path:
+        sys.path.append(pydevd_egg)
+    import pydevd
+    # This clears out any previous connection in case you restarted the debugger from PyCharm
+    pydevd.stoptrace()
+    # 9001 matches the port number that I specified in my configuration
+    pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True, suspend=False)
 
     # if the window already exists then delete it
     if pm.window('CreateZenTangleWindow', exists=True):
