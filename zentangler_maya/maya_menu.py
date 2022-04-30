@@ -14,6 +14,9 @@ selectedObj: None
 tangle_info: dict
 tangle: Tangle
 tangle_image: image
+refresh_button: None
+rules_scroll: None
+tangle_already_created: None
 
 '''Paste in Maya Script Editor
 import importlib
@@ -27,8 +30,10 @@ importlib.reload(rule_editor)
 def add_rules_to_ui(tangle):
     i = 0
     rules = tangle.grammar.rules
+    global rules_scroll
+    rules_scroll = pm.scrollLayout()
 
-    with pm.scrollLayout():
+    with rules_scroll:
         with pm.columnLayout(adjustableColumn=True, height=2000):
             pm.text("Tangle Grammar Editor")
 
@@ -38,6 +43,25 @@ def add_rules_to_ui(tangle):
 
     pm.setParent(window)
     pm.showWindow(window)
+
+
+def add_tangle_to_ui(main_layout):
+    global tangle_image
+    global refresh_button
+
+    image_path = tangle_info.get("png_filename")
+    thumbnail_path = image_path.replace(".png", "_thumbnail.png")
+
+    with main_layout:
+        with pm.columnLayout(adjustableColumn=False, rowSpacing=10):
+            tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=256)
+            refresh_button = pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle, tangle_info, selectedObj))
+
+    pm.setParent(window)
+    pm.showWindow(window)
+
+    add_rules_to_ui(tangle)
+
 
 def refresh_tangle(tangle_info, selectedObj):
     tangle_info['tangle'].create()
@@ -59,6 +83,10 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, gram
     global tangle
     global grammar_options
     global tangle_image
+    global tangle_already_created
+
+    if tangle_already_created:
+        pm.deleteUI(tangle_image, refresh_button, rules_scroll)
 
     if grammar_picker.getValue() == "random grammar":
         grammar_filename = None
@@ -76,17 +104,12 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, main_layout, gram
         tangle_info = create_silhouette_tangle(selectedObj, grammar_filename=grammar_filename)
 
     tangle = tangle_info.get("tangle")
-    image_path = tangle_info.get("png_filename")
-    thumbnail_path = image_path.replace(".png", "_thumbnail.png")
 
-    with main_layout:
-        with pm.columnLayout(adjustableColumn=False, rowSpacing=10):
-            tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=256)
-            pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle, tangle_info, selectedObj))
-    pm.setParent(window)
-    pm.showWindow(window)
+    add_tangle_to_ui(main_layout)
 
-    add_rules_to_ui(tangle)
+    if not tangle_already_created:
+        tangle_already_created = True;
+
     pm.select(selectedObj)
 
 def update_selected_grammar(grammar_icon_ui, *args):
@@ -115,6 +138,8 @@ def create_tangle_window():
         pm.deleteUI("CreateZenTangleWindow")
 
     global window
+    global tangle_already_created
+
     window = pm.window('CreateZenTangleWindow', title="Create ZenTangle", iconName='ZTangler', widthHeight=(400, 400))
     main_layout = pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250)
     with main_layout:
@@ -126,7 +151,6 @@ def create_tangle_window():
             pm.menuItem(label=grammar["name"])
         pm.menuItem(label="random grammar")
 
-
         pm.text(label="Apply as: ", align="left")
         uv_type = pm.radioButtonGrp(
             labelArray2=["Current UV Map", "Scene Silhouette"],
@@ -135,6 +159,10 @@ def create_tangle_window():
         )
 
         pm.button("Create", command=pm.Callback(create_tangles_from_selected, grammar, uv_type, main_layout, grammar_picker))
+
+        if tangle_already_created:
+            add_tangle_to_ui(main_layout)
+
     pm.setParent('..')
     pm.showWindow(window)
 
@@ -152,5 +180,8 @@ def add_zentangler_menu():
                    )
 
     pm.menuItem(l='Create', p=menu, c=pm.Callback(create_tangle_window))
+
+    global tangle_already_created
+    tangle_already_created = False
 
 add_zentangler_menu()
