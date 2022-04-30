@@ -6,7 +6,6 @@ from zentangler.operators.operator_parameter import ParameterDataType
 from zentangler.rule import Rule
 from zentangler.tangle import Tangle
 
-
 """
 import sys
 # This should be the path your PyCharm installation
@@ -22,6 +21,8 @@ pydevd.settrace('localhost', port=9001, stdoutToServer=True, stderrToServer=True
 
 icon_images = {"switch": ""}
 rules = []
+
+
 def get_rule_image_filename(object_name, uv_shell_index, rule_index):
     zentangle_path = str(pm.workspace.getPath() + "/zentangler/")
     filename = zentangle_path + "_rule_" + object_name + "_" + str(uv_shell_index) + "_" + str(rule_index) + ".png"
@@ -46,7 +47,6 @@ def param_value_changed(uv_shell_index, rule_index, param_name, tangle, *args):
 def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tangle):
     from zentangler_maya.color_picker import color_button, update_color_buttons
     global icon_images
-    LINE_STYLE = ["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"]
     rules.append(rule)
 
     with pm.frameLayout(label=rule.name, collapsable=True, collapse=True):
@@ -60,31 +60,38 @@ def add_grammar_rule_widget(uv_shell_index, rule_index, rule: Rule, tangle: Tang
 
                 if param.data_type == ParameterDataType.INT:
                     pm.intSlider(value=value,
-                                changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                  param.name, tangle),
-                                min=param.range_start, max=param.range_end, step=1)
+                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
+                                                                   param.name, tangle),
+                                 min=param.range_start, max=param.range_end, step=1)
 
-                if param.data_type == ParameterDataType.FLOAT:
+                elif param.data_type == ParameterDataType.FLOAT:
                     pm.floatSlider(value=value,
-                                  changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
-                                                                    param.name, tangle),
-                                  min=param.range_start, max=param.range_end, step=0.01)
+                                   changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
+                                                                     param.name, tangle),
+                                   min=param.range_start, max=param.range_end, step=0.01)
 
-                if param.data_type == ParameterDataType.BOOL:
-                    pm.checkBox(value=value,
+                elif param.data_type == ParameterDataType.BOOL:
+                    pm.checkBox(value=value, label='',
                                 changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index, rule_index,
                                                                   param.name, tangle))
 
-                if param.data_type == ParameterDataType.STRING and param.name == "line_style":
+                # if param.data_type == ParameterDataType.STRING and param.name == "line_style":
+                #     styles_menu = pm.optionMenu(changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index,
+                #                                                                   rule_index, param.name, tangle))
+                #     index = 0
+                #     for style in LINE_STYLE:
+                #         pm.menuItem(label=style)
+
+                elif param.data_type == ParameterDataType.STRING:
                     styles_menu = pm.optionMenu(changeCommand=pm.CallbackWithArgs(param_value_changed, uv_shell_index,
                                                                                   rule_index, param.name, tangle))
                     index = 0
-                    for style in LINE_STYLE:
+                    for style in param.options:
                         pm.menuItem(label=style)
 
-                if param.data_type == ParameterDataType.RGB_COLOR:
+                elif param.data_type == ParameterDataType.RGB_COLOR:
                     color_layout = pm.columnLayout()
-                    if param.is_multiple == True:
+                    if param.is_multiple:
                         update_color_buttons(uv_shell_index, rule_index, tangle, param.name, color_layout)
                     else:
                         color_button(uv_shell_index, rule_index, param.name, tangle, -1, value, color_layout)
@@ -115,6 +122,5 @@ def OpenZentangler():
     pm.setParent('..')
     # Result: u'' #
     pm.showWindow(window)
-
 
 # OpenZentangler()

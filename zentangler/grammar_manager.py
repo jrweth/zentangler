@@ -90,19 +90,19 @@ class GrammarManager:
         if operator_name == "split":
             operator = SplitOperator(param_values)
 
-        if operator_name == "ungroup":
+        elif operator_name == "ungroup":
             operator = UngroupOperator(param_values)
 
-        if operator_name == "regroup":
+        elif operator_name == "regroup":
             operator = RegroupOperator(param_values)
 
-        if operator_name == "color":
+        elif operator_name == "color":
             operator = ColorOperator(param_values)
 
-        if operator_name == "line_width":
+        elif operator_name == "line_width":
             operator = LineWidthOperator(param_values)
 
-        if operator_name == "place":
+        elif operator_name == "place":
             operator = PlaceOperator(param_values)
 
         return operator

@@ -183,7 +183,7 @@ class PlaceOperator(AbstractOperator):
     parameters = [
         OperatorParameter(name="shape_type", data_type=ParameterDataType.STRING, default='circle',
                           description="the type of shape to place",
-                          options=['circle', 'ngon', 'star', 'blob', 'initial shape'],
+                          options=['Circle', 'Ngon', 'Star', 'Blob', 'Initial shape'],
                           is_multiple=False
                           ),
         OperatorParameter(name="num_shape_sides", data_type=ParameterDataType.INT, default=6,
@@ -193,7 +193,7 @@ class PlaceOperator(AbstractOperator):
                           ),
         OperatorParameter(name="placement_type", data_type=ParameterDataType.STRING, default='random',
                           description="way to place shape(s)",
-                          options=['random', 'grid'],
+                          options=['Random', 'Grid'],
                           is_multiple=False
                           ),
         OperatorParameter(name="min_size",

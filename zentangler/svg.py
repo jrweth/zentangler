@@ -56,7 +56,8 @@ class SVG:
 
     def save_png(self, png_filename, resolution: int = 1024):
         self.save_svg()
-        inkscape_path = '/opt/local/bin/inkscape'
+        # inkscape_path = '/opt/local/bin/inkscape'
+        inkscape_path = '/usr/local/bin/inkscape'
         #
         # # this wasn't working when calling from maya so
         # # try:
@@ -65,10 +66,18 @@ class SVG:
         # #     print("ERROR: You need inkscape installed to use this script.")
         # #     exit(1)
         #
+        # args = [
+        #     inkscape_path,
+        #     "--without-gui",
+        #     "-f", self.filename,
+        #     "--export-area-page",
+        #     "-w", str(resolution),
+        #     "-h", str(resolution),
+        #     "--export-png=" + png_filename
+        # ]
         args = [
             inkscape_path,
-            "--without-gui",
-            "-f", self.filename,
+            self.filename,
             "--export-area-page",
             "-w", str(resolution),
             "-h", str(resolution),

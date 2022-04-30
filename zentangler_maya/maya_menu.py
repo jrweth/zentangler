@@ -100,7 +100,7 @@ def update_selected_grammar(grammar_icon_ui, *args):
 
 def create_tangle_window():
     '''Remote Debug Connection Code'''
-    # # # This should be the path your PyCharm installation
+    # # This should be the path your PyCharm installation
     # pydevd_egg = r"/Applications/PyCharm.app/Contents/debug-eggs/pycharm-debug.egg"
     # if not pydevd_egg in sys.path:
     #     sys.path.append(pydevd_egg)
@@ -118,7 +118,7 @@ def create_tangle_window():
     window = pm.window('CreateZenTangleWindow', title="Create ZenTangle", iconName='ZTangler', widthHeight=(400, 400))
     main_layout = pm.columnLayout(adjustableColumn=True, rowSpacing=10, columnWidth=250)
     with main_layout:
-        pm.text("Select Object(s) to create the tangle.")
+        pm.text("Select object(s) to create the tangle.")
 
         grammar_icon_ui = pm.image(image=BASE_GRAMMARS[0]["icon_path"], backgroundColor=[0.5, 0.5, 0.5], width=100, height=100)
         grammar_picker = pm.optionMenu(label='Select Grammar: ', changeCommand=pm.CallbackWithArgs(update_selected_grammar, grammar_icon_ui))

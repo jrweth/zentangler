@@ -19,6 +19,7 @@ def sineCurveLine(numPoints):
         points.append((x, math.sin(i * math.pi * 2 / numPoints)))
     return points
 
+
 def halfCircleLine(numPoints):
     """
     return the points of a half circle between 0 and 1
@@ -30,6 +31,7 @@ def halfCircleLine(numPoints):
         points.append((x, y))
     return points
 
+
 def noiseLine(numPoints):
     points = []
     for i in range(numPoints+1):
@@ -37,6 +39,7 @@ def noiseLine(numPoints):
         y = 0
         points.append((x, y))
     return points
+
 
 def getPerlinJitter(x, y, seed):
     noise1 = PerlinNoise(octaves=1, seed=seed)
@@ -47,6 +50,7 @@ def getPerlinJitter(x, y, seed):
     jitter += 0.25 * noise3([x, y])
     return jitter
 
+
 # lines defined by a series of points going from x=0 to x=1
 LINE_STYLE = {
     "STRAIGHT": [(0, 0), (1, 0)],
@@ -56,8 +60,6 @@ LINE_STYLE = {
     "HALF_CIRCLE": halfCircleLine(20),
     "NOISE": noiseLine(20)
 }
-
-
 
 
 class SplitOperator(AbstractOperator):
@@ -81,6 +83,7 @@ class SplitOperator(AbstractOperator):
         OperatorParameter(name="cross_split", data_type=ParameterDataType.BOOL, default=False,
                           description="if the split should be split along both x and y axis"),
         OperatorParameter(name="line_style", data_type=ParameterDataType.STRING, default="STRAIGHT",
+                          options=["STRAIGHT", "JAGGED", "STEPPED", "CURVED", "HALF_CIRCLE", "NOISE"],
                           description="the type of line style to create the splits"),
         OperatorParameter(name="line_style_scale_x", data_type=ParameterDataType.FLOAT, default=0.1,
                           description="how much the line style is scaled along the x axis", range_start=0.001, range_end=1.0),
