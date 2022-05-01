@@ -55,20 +55,20 @@ class ColorOperator(AbstractOperator):
 
             fill_type = self.get_parameter_value("fill_color_assignment")
             fill_colors = self.get_parameter_value("fill_colors")
-            if fill_type == "single color":
+            if fill_type == "Single color":
                 new_shape.fill_color = fill_colors[0]
-            elif fill_type == "cycle colors":
+            elif fill_type == "Cycle colors":
                 new_shape.fill_color = fill_colors[i % len(fill_colors)]
-            elif fill_type == "random":
+            elif fill_type == "Random":
                 new_shape.fill_color = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1))
 
             line_type = self.get_parameter_value("line_color_assignment")
             line_colors = self.get_parameter_value("line_colors")
-            if line_type == "single color":
+            if line_type == "Single color":
                 new_shape.stroke_color = line_colors[0]
-            elif line_type == "cycle colors":
+            elif line_type == "Cycle colors":
                 new_shape.stroke_color = line_colors[i % len(line_colors)]
-            elif fill_type == "random":
+            elif fill_type == "Random":
                 new_shape.stroke_color = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1))
 
             self.new_shapes.append(new_shape)

@@ -70,11 +70,7 @@ class RegroupOperator(AbstractOperator):
     def create_thumbnail(self, png_filename: str):
         shapes = self.get_thumbnail_shapes_grid(0.25)
 
-        output_tags = []
-        for i in range(self.get_parameter_value("k")):
-            output_tags.append("tag_" + str(i))
-
-        new_shapes = self.execute(shapes, output_tags)
+        new_shapes = self.execute(shapes, self.get_parameter_value("output_tags"))
 
         #create the svg and png files
         svg = SVG(png_filename.replace(".png", ".svg"))

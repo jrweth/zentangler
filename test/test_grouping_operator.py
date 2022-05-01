@@ -21,7 +21,7 @@ class TestGroupingOperator(unittest.TestCase):
         test splitting the simple square
         """
         param_values = [
-            OperatorParameterValue("k", 2)
+            OperatorParameterValue("output_tags", ["tag1", "tag2"])
         ]
         operator = RegroupOperator(param_values)
 
@@ -29,9 +29,9 @@ class TestGroupingOperator(unittest.TestCase):
 
         new_shapes = operator.execute(shapes, ["shape1", "shape2"])
 
-        self.assertEqual(new_shapes[0].group_id, 0, "first shape is group id 0")
-        self.assertEqual(new_shapes[1].group_id, 1, "second shape is group id 1")
-        self.assertEqual(new_shapes[2].group_id, 0, "third shape is group id 0")
+        self.assertEqual(new_shapes[0].tag, "tag1", "first shape is group id 0")
+        self.assertEqual(new_shapes[1].tag, "tag2", "second shape is group id 1")
+        self.assertEqual(new_shapes[2].tag, "tag1", "third shape is group id 0")
 
         svg = SVG(SCRIPT_DIR + '/results/test-regroup-operator-2.svg')
         for shape in new_shapes:
@@ -44,7 +44,7 @@ class TestGroupingOperator(unittest.TestCase):
         test splitting the simple square
         """
         param_values = [
-            OperatorParameterValue("k", 3)
+            OperatorParameterValue("output_tags", ["tag1", "tag2", "tag3"])
         ]
         operator = RegroupOperator(param_values)
 
@@ -52,10 +52,9 @@ class TestGroupingOperator(unittest.TestCase):
 
         new_shapes = operator.execute(shapes, ["shape1", "shape2", "shape3"])
 
-        self.assertEqual(new_shapes[0].group_id, 0, "first shape is group id 0")
-        self.assertEqual(new_shapes[1].group_id, 1, "second shape is group id 1")
-        self.assertEqual(new_shapes[2].group_id, 2, "third shape is group id 2")
-        self.assertEqual(new_shapes[3].group_id, 0, "fourth shape is group id 0")
+        self.assertEqual(new_shapes[0].tag, "tag1", "first shape is group id 1")
+        self.assertEqual(new_shapes[1].tag, "tag2", "second shape is group id 2")
+        self.assertEqual(new_shapes[2].tag, "tag3", "third shape is group id 3")
 
         svg = SVG(SCRIPT_DIR + '/results/test-regroup-operator-3.svg')
         for shape in new_shapes:
@@ -68,19 +67,19 @@ class TestGroupingOperator(unittest.TestCase):
         test splitting the simple square
         """
         param_values = [
-            OperatorParameterValue("k", 4)
+            OperatorParameterValue("output_tags", ["tag1", "tag2", "tag3", "tag4"])
         ]
         operator = RegroupOperator(param_values)
 
         shapes = operator.get_thumbnail_shapes_grid(0.25)
 
-        new_shapes = operator.execute(shapes, ["shape1", "shape2", "shape3", "shape4"])
+        new_shapes = operator.execute(shapes, [])
 
-        self.assertEqual(new_shapes[0].group_id, 0, "first shape is group id 0")
-        self.assertEqual(new_shapes[1].group_id, 1, "second shape is group id 1")
-        self.assertEqual(new_shapes[2].group_id, 2, "third shape is group id 2")
-        self.assertEqual(new_shapes[3].group_id, 3, "fourth shape is group id 3")
-        self.assertEqual(new_shapes[4].group_id, 0, "fifth shape is group id 0")
+        self.assertEqual(new_shapes[0].tag, "tag1", "first shape is group id 1")
+        self.assertEqual(new_shapes[1].tag, "tag2", "second shape is group id 2")
+        self.assertEqual(new_shapes[2].tag, "tag3", "third shape is group id 3")
+        self.assertEqual(new_shapes[3].tag, "tag4", "third shape is group id 3")
+        self.assertEqual(new_shapes[4].tag, "tag1", "fifth shape is group id 0")
 
         svg = SVG(SCRIPT_DIR + '/results/test-regroup-operator-4.svg')
         for shape in new_shapes:
@@ -90,7 +89,7 @@ class TestGroupingOperator(unittest.TestCase):
 
     def test_regroup_thumbnail(self):
         param_values = [
-            OperatorParameterValue("k", 3)
+            OperatorParameterValue("output_tags", ["tag1", "tag2"])
         ]
         operator = RegroupOperator(param_values)
         png_filename = SCRIPT_DIR + '/results/test-regroup-operator-thumbnail.png'

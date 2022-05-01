@@ -4,7 +4,7 @@ from zentangler_maya.texture_generator import TextureGenerator
 from zentangler_maya.uv_shape_generator import UVShapeGenerator
 from datetime import datetime
 
-def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=None, assign_texture=False):
+def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=None, assign_texture=False, tangle_name="zentangle"):
     """
     Create a tangle associated with a given object
     Parameters:
@@ -29,7 +29,7 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
         grammar = grammar_manager.get_grammar(grammar_filename)
     
     # create tangle
-    tangle = Tangle(initial_shapes, grammar)
+    tangle = Tangle(initial_shapes, grammar, tangle_name)
     tangle.create()
     
     # create texture
@@ -41,7 +41,7 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
     thumbnail_filename = filename.replace(".png", "_thumbnail.png")
     texture_gen.override_png_filename = thumbnail_filename
     texture_gen.create_texture_file(256)
-    texture_gen.override_png_filename = None
+    texture_gen.override_png_filename = override_png_filename
 
     # assign texture if required
     if assign_texture:
@@ -49,7 +49,7 @@ def create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=N
     return {"tangle": tangle, "png_filename": texture_gen.get_texture_file_name("png")}
 
 
-def create_silhouette_tangle(obj, grammar_filename, override_png_filename=None):
+def create_silhouette_tangle(obj, grammar_filename, override_png_filename=None, tangle_name="zentangle"):
     """
     Create a tangle based upon the current silhouette of the object in the viewport
     Parameters:
@@ -62,11 +62,11 @@ def create_silhouette_tangle(obj, grammar_filename, override_png_filename=None):
     """
     shape_gen = UVShapeGenerator(obj)
     initial_shapes = [shape_gen.get_silhouette_shape()]
-    
-    return create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=override_png_filename)
+
+    return create_tangle(obj, initial_shapes, grammar_filename, override_png_filename=override_png_filename, tangle_name=tangle_name)
 
 
-def create_uv_map_tangle(obj, grammar_filename, override_png_filename=None):
+def create_uv_map_tangle(obj, grammar_filename, override_png_filename=None, tangle_name="zentangle"):
     """
     Create a tangle based upon the current uv map set selected and assign the generated texture
     Parameters:
@@ -80,4 +80,4 @@ def create_uv_map_tangle(obj, grammar_filename, override_png_filename=None):
     shape_gen = UVShapeGenerator(obj)
     initial_shapes = [shape_gen.get_current_uv_shape()]
     
-    return create_tangle(obj, initial_shapes, grammar_filename, override_png_filename, assign_texture=True)
+    return create_tangle(obj, initial_shapes, grammar_filename, override_png_filename, assign_texture=True, tangle_name=tangle_name)

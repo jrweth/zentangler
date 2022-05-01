@@ -33,7 +33,7 @@
 			"output_tags" : ["colored_strips"],
 			"operator" : "color",
 			"parameters" : {
-				"fill_color_assignment": "random",
+				"fill_color_assignment": "Random",
 				"random_seed": 7
 			}
 		},
@@ -44,7 +44,7 @@
 			"output_tags" : ["strip1", "strip2", "strip3", "strip4"],
 			"operator" : "regroup",
 			"parameters" : {
-				"k" : 4
+				"output_tags": ["strip1", "strip2", "strip3", "strip4"]
 			}
 		},
 		{
@@ -115,7 +115,7 @@
 			"output_tags" : ["term"],
 			"operator" : "color",
 			"parameters" : {
-				"fill_color_assignment" : "random"
+				"fill_color_assignment" : "Random"
 			}
 		}
 	]

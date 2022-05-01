@@ -32,7 +32,7 @@
 			"output_tags" : ["half_circle_1", "half_circle_2"],
 			"operator" : "regroup",
 			"parameters" : {
-				"k" : 2
+				"output_tags" : ["half_circle_1", "half_circle_2"]
 			}
 		},
 		{
@@ -43,8 +43,8 @@
 			"operator" : "color",
 			"parameters" : {
 				"fill_colors" : [[0.5, 0.5, 1.0], [0.8, 0.8, 1.0]],
-				"fill_color_assignment": "cycle colors",
-				"line_color_assignment": "single color"
+				"fill_color_assignment": "Cycle colors",
+				"line_color_assignment": "Single color"
 			}
 		},
 		{

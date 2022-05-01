@@ -8,13 +8,8 @@ class Tangle:
     """
     Tangle class holds the tangle creation (grammar expansion) logic
     """
-    """
-    Parameters:
-        history: collection of expansions to define how the tangle was generated
-    """
-    history: list
 
-    def __init__(self, init_shapes: list, grammar: Grammar):
+    def __init__(self, init_shapes: list, grammar: Grammar, name: str = "tangle"):
         """
         initialize a tangle
 
@@ -25,6 +20,8 @@ class Tangle:
         self.all_shapes = init_shapes
         self.grammar = grammar
         self.rule_ids_updated = set()
+        self.name = name
+        self.history = list
 
     def create(self):   #, init_shapes: list, grammar: Grammar):
         print("Creating tangle")
@@ -113,4 +110,4 @@ class Tangle:
                 the parameter value to be updated
         """
         self.rule_ids_updated.add(rule_id)
-        self.grammar.rules[rule_id].operator.set_parameter_value(parameterValue)
+        self.grammar.rules[rule_id].set_parameter_value(parameterValue)
