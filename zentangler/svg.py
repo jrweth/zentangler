@@ -56,8 +56,8 @@ class SVG:
 
     def save_png(self, png_filename, resolution: int = 1024):
         self.save_svg()
-        # inkscape_path = '/opt/local/bin/inkscape'
-        inkscape_path = '/usr/local/bin/inkscape'
+        inkscape_path = '/opt/local/bin/inkscape'
+        # inkscape_path = '/usr/local/bin/inkscape'
         #
         # # this wasn't working when calling from maya so
         # # try:

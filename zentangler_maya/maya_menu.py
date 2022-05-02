@@ -5,10 +5,10 @@ import sys
 
 from zentangler.tangle import Tangle
 from zentangler_maya.tangle_creation import create_uv_map_tangle, create_silhouette_tangle
-from zentangler.svg import SVG
 from zentangler_maya.tangle_editor import TangleEditor
-import zentangler_maya.rule_editor as rule_editor
 from zentangler.grammar import BASE_GRAMMARS
+from zentangler.multi_tangle import MultiTangle
+from zentangler_maya.multi_tangle_editor import MultiTangleEditor
 
 window: None
 selectedObj: None
@@ -53,20 +53,10 @@ def add_tangle_to_ui(tangle_layout):
     for child in tangle_layout.children():
         pm.deleteUI(child)
 
-    TangleEditor(tangle_layout, tangle)
-    #
-    # image_path = tangle_info.get("png_filename")
-    # thumbnail_path = image_path.replace(".png", "_thumbnail.png")
-    #
-    # with main_layout:
-    #     with pm.columnLayout(adjustableColumn=False, rowSpacing=10):
-    #         tangle_image = pm.image("tangle_image", image=thumbnail_path, backgroundColor=[0.5, 0.5, 0.5], width=256)
-    #         refresh_button = pm.button("Refresh Tangle", command=pm.Callback(refresh_tangle, tangle_info, selectedObj))
-    #
-    #pm.setParent(window)
-    #pm.showWindow(window)
-
-    #add_rules_to_ui(tangle)
+    if isinstance(tangle, Tangle):
+        TangleEditor(tangle_layout, tangle)
+    elif isinstance(tangle, MultiTangle):
+        MultiTangleEditor(tangle_layout, tangle)
 
 
 # def refresh_tangle(tangle_info, selectedObj):
@@ -83,7 +73,7 @@ def add_tangle_to_ui(tangle_layout):
 #     pm.select(selectedObj)
 
 
-def create_tangles_from_selected(base_grammar, uv_type_radios, tangle_layout, grammar_picker):
+def create_tangles_from_selected(base_grammar, uv_type_radios, tangle_layout, grammar_picker, uv_shells):
     global tangle_info
     global selectedObj
     selected_objs = []
@@ -95,7 +85,7 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, tangle_layout, gr
     # clear out previous tangle editors if they exist
     for child in tangle_layout.children():
         pm.deleteUI(child)
-    pm.refresh()
+
 
     if grammar_picker.getValue() == "random grammar":
         grammar_filename = None
@@ -121,18 +111,21 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, tangle_layout, gr
 
     override_png_filename = TangleEditor.get_img_folder_from_name(selectedObj.name())
     override_png_filename += "/tangle.png"
+    multi_uv_shells = pm.checkBox(uv_shells, query=True, value=True)
     if uv_type_radios.getSelect() == 1:
         tangle_info = create_uv_map_tangle(selectedObj,
                                            grammar_filename=grammar_filename,
                                            override_png_filename=override_png_filename,
-                                           tangle_name=selectedObj.name()
+                                           tangle_name=selectedObj.name(),
+                                           multi_uv_shells=multi_uv_shells
                                            )
     elif uv_type_radios.getSelect() == 2:
 
         tangle_info = create_silhouette_tangle(selectedObj,
                                            grammar_filename=grammar_filename,
                                            override_png_filename=override_png_filename,
-                                           tangle_name=selectedObj.name()
+                                           tangle_name=selectedObj.name(),
+                                           multi_uv_shells=multi_uv_shells
                                            )
 
 
@@ -195,10 +188,11 @@ def create_tangle_window():
             numberOfRadioButtons=2,
             select=1
         )
+        uv_shells = pm.checkBox(label="tangle for each uv shell")
 
         create_button = pm.button("Create")
         tangle_layout = pm.columnLayout(adjustableColumn=False, rowSpacing=10)
-        pm.button(create_button, edit=True,command=pm.Callback(create_tangles_from_selected, grammar, uv_type, tangle_layout, grammar_picker))
+        pm.button(create_button, edit=True,command=pm.Callback(create_tangles_from_selected, grammar, uv_type, tangle_layout, grammar_picker, uv_shells))
 
 
         if tangle_already_created:

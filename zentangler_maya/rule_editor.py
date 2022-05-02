@@ -1,10 +1,6 @@
 import pymel.core as pm
-from zentangler.operators.split_operator import SplitOperator
-from zentangler.operators.outline_operator import OutlineOperator
 from zentangler.operators.operator_parameter import OperatorParameterValue as OPV
 from zentangler.operators.operator_parameter import ParameterDataType
-from zentangler.rule import Rule
-from zentangler.tangle import Tangle
 from zentangler_maya.color_picker import ColorPicker
 
 class RuleEditor:

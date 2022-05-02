@@ -18,6 +18,56 @@ class UVShapeGenerator:
         """
         self.obj = object
 
+    def get_current_uv_shell_shapes(self):
+        polygons = []
+        pm.select(self.obj.name())
+        uv_f = self.obj.getAssignedUVs()
+        uv_face_num_points = uv_f[0]
+        uv_face_points = uv_f[1]
+        uv_s= self.obj.getUvShellsIds()
+        uv_shell_ids = uv_s[0]
+        num_uv_shells = uv_s[1]
+        uv_coords = self.obj.getUVs()
+
+        uv_shell_face_polys = []
+        # create the list of faces
+        for i in range(num_uv_shells):
+            uv_shell_face_polys.append([])
+
+        face_index = 0
+        # loop through the uv faces
+        for num_face_verts in uv_face_num_points:
+            # for each face gather the points of all the uvs
+            points = []
+            # get the uvs making up each uv face
+            for i in range(num_face_verts):
+                uv_index = uv_face_points[face_index]
+                shell_id = uv_shell_ids[uv_index]
+                points.append((uv_coords[0][uv_index], uv_coords[1][uv_index]))
+                face_index += 1
+            uv_shell_face_polys[shell_id].append(Polygon(points))
+
+        # now that we have a list of polygons for each uv_shell lets combine them all together
+        shapes_list = []
+        for shell_id in range(num_uv_shells):
+            combined = uv_shell_face_polys[shell_id][0]
+            for poly_index in range(1, len(uv_shell_face_polys[shell_id])):
+                combined = combined.union(uv_shell_face_polys[shell_id][poly_index])
+
+            #now that we have our combined polygon let's make a shape
+            if isinstance(combined, Polygon):
+                shapes_list.append([Shape(geometry=MultiPolygon([combined]))])
+            elif isinstance(combined, MultiPolygon):
+                shapes_list.append([Shape(geometry=combined)])
+            else:
+                print ("neither polygon or multipolygon")
+
+
+        #now we return our array of shell shapes
+        return shapes_list
+
+
+
     def get_current_uv_shape(self):
         """
         use shapely to combine all the uv polygons into 1 uv polygon

@@ -5,7 +5,7 @@ import os
 
 class TangleEditor:
 
-    def __init__(self, parent_layout, tangle: Tangle):
+    def __init__(self, parent_layout, tangle: Tangle, parent_multi_tangle_editor=None):
         # the parent layout to place the tangle editor in
         self.parent_layout = parent_layout
 
@@ -24,6 +24,8 @@ class TangleEditor:
         # container to hold the rules in
         self.rules_container = None
 
+        self.parent_multi_tangle_editor = parent_multi_tangle_editor
+
         # create our container
         with self.parent_layout:
             self.container_layout = pm.columnLayout(adjustableColumn=False, rowSpacing=10)
@@ -34,6 +36,8 @@ class TangleEditor:
         self.tangle.re_expand()
         self.generate_thumbnail()
         self.generate_png()
+        if self.parent_multi_tangle_editor is not None:
+            self.parent_multi_tangle_editor.refresh()
         self.set_message("")
         pm.refresh()
 

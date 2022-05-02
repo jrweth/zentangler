@@ -10,13 +10,14 @@ class MultiTangle:
     Class holding multiple tangles that can be rendered into a single image
     """
 
-    def __init__(self, tangles: list = []):
+    def __init__(self, tangles: list = [], tangle_name: str = "multi_tangle"):
         """
         Parameters:
             tangles: list<Tangle>
                 list of tangles
         """
         self.tangles: [Tangle] = tangles
+        self.tangle_name = tangle_name
 
     def add_tangle(self, tangle: Tangle):
         """
@@ -50,10 +51,11 @@ class MultiTangle:
         """
         index = 0
         grammar_mgr = GrammarManager()
-        for shape_list in shape_lists:
+        for i in range(len(shape_lists)):
             grammar_base_index = index % len(BASE_GRAMMARS)
             grammar = grammar_mgr.get_grammar(BASE_GRAMMARS[grammar_base_index]["path"])
-            self.add_tangle(Tangle(shape_list, grammar))
+            sub_name = self.tangle_name + "_" + str(i)
+            self.add_tangle(Tangle(shape_lists[i], grammar, sub_name))
             index += 1
 
     def init_from_shape_lists_grammar(self, shape_lists: list, grammar: Grammar):
@@ -129,7 +131,22 @@ class MultiTangle:
         create a combined svg of all the tangle shapes created in order
         """
         svg = SVG(svg_filename)
+        for shape in self.get_last_expansion_shapes():
+            svg.add_shape(shape)
+        svg.save_svg()
+
+    def create_combined_png(self, png_filename, resolution=2048):
+
+        svg_filename = png_filename.replace('.png', '.svg').replace('.PNG', '.SVG')
+        svg = SVG(svg_filename)
+        for shape in self.get_last_expansion_shapes():
+            svg.add_shape(shape)
+        svg.save_png(png_filename, resolution)
+
+
+    def get_last_expansion_shapes(self):
+        shapes = []
         for tangle in self.tangles:
             for shape in tangle.get_last_expansion_shapes():
-                svg.add_shape(shape)
-        svg.save_svg()
+                shapes.append(shape)
+        return shapes
