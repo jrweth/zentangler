@@ -14,14 +14,14 @@ class TestGrammar(unittest.TestCase):
     def test_grammar_1(self):
         gm = GrammarManager()
         grammar = gm.get_grammar((os.path.dirname(SCRIPT_DIR) + "/zentangler/grammars/test_grammar_1.json"))
-        self.assertEqual(len(grammar.rules), 3, "There are 3 grammar rules")
+        self.assertEqual(len(grammar.rules), 4, "There are 4 grammar rules")
         tangle = Tangle(grammar=grammar, init_shapes=[SQUARE_SHAPE])
 
         tangle.create()
         tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar1.svg')
         tangle.create_last_expansion_png(os.path.dirname(SCRIPT_DIR) + '/zentangler/grammars/test_grammar_1.png', 100)
 
-        self.assertEqual(len(tangle.grammar.rules), 3, "number of grammar rules is 3")
+        self.assertEqual(len(tangle.grammar.rules), 4, "number of grammar rules is 4")
         self.assertEqual(len(tangle.get_last_expansion_shapes()), 337)
 
     def test_grammar_2(self):

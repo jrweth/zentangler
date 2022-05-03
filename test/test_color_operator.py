@@ -20,9 +20,9 @@ class TestColorOperator(unittest.TestCase):
         shape: Shape = SQUARE_SHAPE.clone()
         param_values = [
             OperatorParameterValue("line_colors", [(1, 0, 0)]),
-            OperatorParameterValue("line_color_assignment", "single color"),
+            OperatorParameterValue("line_color_assignment", "Single color"),
             OperatorParameterValue("fill_colors", [(0, 1, 0)]),
-            OperatorParameterValue("fill_color_assignment", "single color"),
+            OperatorParameterValue("fill_color_assignment", "Single color"),
         ]
         color_operator = ColorOperator(param_values)
 
@@ -52,9 +52,9 @@ class TestColorOperator(unittest.TestCase):
 
         param_values = [
             OperatorParameterValue("line_colors", [(1, 0, 0), (0, 1, 0), (0, 0, 1)]),
-            OperatorParameterValue("line_color_assignment", "cycle colors"),
+            OperatorParameterValue("line_color_assignment", "Cycle colors"),
             OperatorParameterValue("fill_colors", [(0, 1, 0), (0, 0, 1), (1, 0, 0)]),
-            OperatorParameterValue("fill_color_assignment", "cycle colors"),
+            OperatorParameterValue("fill_color_assignment", "Cycle colors"),
         ]
         color_operator = ColorOperator(param_values)
 

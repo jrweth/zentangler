@@ -19,7 +19,6 @@ class UVShapeGenerator:
         self.obj = object
 
     def get_current_uv_shell_shapes(self):
-        polygons = []
         pm.select(self.obj.name())
         uv_f = self.obj.getAssignedUVs()
         uv_face_num_points = uv_f[0]
@@ -146,3 +145,74 @@ class UVShapeGenerator:
 
         #otherwise just return the polygon
         return Shape(geometry=combined)
+
+    def get_silhouette_uv_shell_shapes(self):
+        object_name = self.obj.name()
+        map_name = "zentanglerMap"
+
+        # if the zentanglerMap UV map does not yet exist, create it
+        indices = pm.polyUVSet(object_name, query=True, allUVSetsIndices=True)
+        already_created = False
+        for i in indices[:]:
+            name = pm.getAttr(object_name + ".uvSet[" + str(i) + "].uvSetName")
+            if name == map_name:
+                already_created = True
+                break
+
+        if not already_created:
+            pm.polyUVSet(create=True, uvSet=map_name)
+
+        # select all faces and do the poly projection
+        pm.polyUVSet(currentUVSet=True, uvSet=map_name)
+        all_faces = object_name + ".f[0:" + str(self.obj.numFaces() - 1) + "]"
+
+        # perform the UV projection from the camera view
+        pm.polyProjection(all_faces, type='Planar', md='p')
+        pm.select(self.obj)
+
+        # select just the front facing faces
+        mel.eval(
+            'buildObjectMenuItemsNow "MainPane|viewPanes|modelPanel4|modelPanel4|modelPanel4|modelPanel4ObjectPop"')
+        mel.eval('doMenuComponentSelectionExt("' + object_name + '", "facet", 1);')
+        mel.eval("selectUVFaceOrientationComponents {} 0 1 1;")
+
+        # loop through the faces and get the UV points for each UV face
+        faces = pm.ls(selection=True, flatten=True)
+        uv_s = self.obj.getUvShellsIds(uvSet=map_name)
+        uv_shell_ids = uv_s[0]
+        num_uv_shells = uv_s[1]
+        uv_coords = self.obj.getUVs(uvSet=map_name)
+
+        # create the list of faces
+        uv_shell_face_polys = []
+        for i in range(num_uv_shells):
+            uv_shell_face_polys.append([])
+
+        for face in faces:
+            points = []
+            if face.numVertices() > 2:
+                for i in range(face.numVertices()):
+                    uv_index = face.getUVIndex(i, map_name)
+                    shell_id = uv_shell_ids[uv_index]
+                    points.append((uv_coords[0][uv_index], uv_coords[1][uv_index]))
+                uv_shell_face_polys[shell_id].append(Polygon(points))
+
+        # now that we have a list of polygons for each uv_shell lets combine them all together
+        shapes_list = []
+        for shell_id in range(num_uv_shells):
+            if len(uv_shell_face_polys[shell_id]) > 0:
+                combined = uv_shell_face_polys[shell_id][0]
+                for poly_index in range(1, len(uv_shell_face_polys[shell_id])):
+                    combined = combined.union(uv_shell_face_polys[shell_id][poly_index])
+
+                #now that we have our combined polygon let's make a shape
+                if isinstance(combined, Polygon):
+                    shapes_list.append([Shape(geometry=MultiPolygon([combined]))])
+                elif isinstance(combined, MultiPolygon):
+                    shapes_list.append([Shape(geometry=combined)])
+                else:
+                    print ("neither polygon or multipolygon")
+
+
+        #now we return our array of shell shapes
+        return shapes_list

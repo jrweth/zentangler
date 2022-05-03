@@ -5,6 +5,8 @@ from shapely.geometry import MultiPolygon, Polygon, Point
 from shapely.affinity import translate, scale, rotate
 from zentangler.operators.abstract_operator import AbstractOperator
 from zentangler.operators.operator_parameter import OperatorParameter, ParameterDataType, OperatorParameterValue
+from zentangler.shape import Shape
+from zentangler.svg import SVG
 
 
 def ngon_points(num_points):
@@ -421,3 +423,27 @@ class PlaceOperator(AbstractOperator):
             self.base_shape = Polygon(nstar_points(num_shape_sides, .15))
         elif shape_type == 'ngon':
             self.base_shape = Polygon(ngon_points(num_shape_sides))
+
+    def create_thumbnail(self, png_filename: str):
+        min_size = self.get_parameter_value("min_size")
+        min_distance = self.get_parameter_value("min_distance")
+        grid_size = max(min_size, min_distance)
+        num_shapes = (1/grid_size)*(1/grid_size)
+
+
+        if num_shapes > 8000:
+
+            points = [(0.45, 0.45), (0.45, 0.55), (0.55, 0.55), (0.55, 0.45)]
+            outer_points = [(0, 0), (0, 1), (1, 1), (1, 0)]
+            m_poly = MultiPolygon([Polygon(points)])
+            shapes = [Shape(geometry=m_poly, shape_id=0)]
+            new_shapes = self.execute(shapes, ["shapes", "remainder"])
+            # create the svg and png files
+            svg = SVG(png_filename.replace(".png", ".svg"))
+            svg.add_shape(Shape(geometry=MultiPolygon([Polygon(outer_points)])))
+            for shape in new_shapes:
+                svg.add_shape(shape)
+            svg.save_png(png_filename, resolution=100)
+        else:
+            return AbstractOperator.create_thumbnail(self, png_filename)
+

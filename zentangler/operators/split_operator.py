@@ -1,7 +1,5 @@
 import math
 from perlin_noise import PerlinNoise
-
-
 from zentangler.operators.abstract_operator import AbstractOperator
 from zentangler.operators.operator_parameter import OperatorParameter, ParameterDataType, OperatorParameterValue
 from zentangler.shape import Shape

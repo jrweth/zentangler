@@ -3,8 +3,18 @@
 	"seed" : -1,
 	"rules" : [
 		{
-			"rule_name" : "cross split",
+			"rule_name" : "reduce line width",
 			"matching_tags" : ["origin"],
+			"group_id" : 0,
+			"output_tags" : ["origin_skinny"],
+			"operator" : "line_width",
+			"parameters" : {
+				"line_width" : 0.01
+			}
+		},
+		{ 
+			"rule_name" : "cross split",
+			"matching_tags" : ["origin_skinny"],
 			"group_id" : 0,
 			"output_tags" : ["a"],
 			"operator" : "split",

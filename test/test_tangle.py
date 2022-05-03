@@ -19,7 +19,7 @@ class TestTangle(unittest.TestCase):
         tangle.create()
         tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-tangle.svg')
 
-        self.assertEqual(len(tangle.grammar.rules), 3, "number of grammar rules is 3")
+        self.assertEqual(len(tangle.grammar.rules), 4, "number of grammar rules is 4")
         self.assertEqual(len(tangle.get_last_expansion_shapes()), 337)
 
 
@@ -30,15 +30,15 @@ class TestTangle(unittest.TestCase):
 
         tangle.create()
 
-        self.assertEqual(len(tangle.grammar.rules), 3, "number of grammar rules is 3")
+        self.assertEqual(len(tangle.grammar.rules), 4, "number of grammar rules is 4")
         self.assertEqual(len(tangle.get_last_expansion_shapes()), 337)
 
-        tangle.update_rule_parameter(2, OperatorParameterValue("width", 0.03))
+        tangle.update_rule_parameter(3, OperatorParameterValue("width", 0.03))
         tangle.re_expand()
 
         tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-tangle-re-expand.svg')
 
-        self.assertEqual(len(tangle.grammar.rules), 3, "number of grammar rules is 3")
+        self.assertEqual(len(tangle.grammar.rules), 4, "number of grammar rules is 4")
         self.assertEqual(len(tangle.get_last_expansion_shapes()), 251)
 
 

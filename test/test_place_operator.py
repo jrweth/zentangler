@@ -51,5 +51,28 @@ class TestPlaceOperator(unittest.TestCase):
         # self.assertEqual(new_shapes[0].fill_color[1], 1, "green fill value matches")
         # self.assertEqual(new_shapes[0].tag, 'colored', "new tag matches")
 
+    def test_thumbnail(self):
+        """
+        test splitting the simple square and then assigning colors
+        """
+        shape: Shape = SQUARE_SHAPE.clone()
+        param_values = [
+            OperatorParameterValue("min_size", 0.01),
+            OperatorParameterValue("max_size", 0.01),
+            OperatorParameterValue("min_distance", 0.01),
+            OperatorParameterValue("random_seed", 2),
+            OperatorParameterValue("shape_type", "circle"),
+            OperatorParameterValue("num_shape_sides", 5),
+            OperatorParameterValue("rotation_random", False),
+            OperatorParameterValue("placement_type", "grid"),
+        ]
+        operator = PlaceOperator(param_values)
+
+        png_filename = SCRIPT_DIR + '/results/test-place-operator-thumbnail.png';
+        operator.create_thumbnail(png_filename)
+
+        # self.assertEqual(new_shapes[0].stroke_color[0], 1, "red stroke value matches")
+        # self.assertEqual(new_shapes[0].fill_color[1], 1, "green fill value matches")
+        # self.assertEqual(new_shapes[0].tag, 'colored', "new tag matches")
 if __name__ == '__main__':
     unittest.main()
