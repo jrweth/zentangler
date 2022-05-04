@@ -2,7 +2,7 @@
 	"grammar_name" : "Test Grammar 1", 
 	"seed" : -1,
 	"rules" : [
-		{ 
+		{
 			"rule_name" : "cross split",
 			"matching_tags" : ["origin"],
 			"group_id" : 0,
@@ -14,7 +14,7 @@
 			}
 		},
 
-		{ 
+		{
 			"rule_name" : "regroup",
 			"matching_tags" : ["a"],
 			"group_id" : 0,
@@ -23,8 +23,8 @@
 			"parameters" : {
 				"output_tags" : ["b","c"]
 			}
-		}, 
-		{ 
+		},
+		{
 			"rule_name" : "split diagonal",
 			"matching_tags" : ["c"],
 			"group_id" : 0,

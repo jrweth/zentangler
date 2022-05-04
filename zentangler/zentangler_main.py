@@ -14,7 +14,8 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 def main():
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    grammar_filepath = SCRIPT_DIR + "/grammars/test_grammar_1.json"
+    grammar_filepath = SCRIPT_DIR + "/grammars/test_grammar_6.json"
+    svg_path = SCRIPT_DIR + '/results/test-6.svg';
 
     print(os.getcwd())
 
@@ -38,12 +39,14 @@ def main():
     tangle_shapes = tangle.create()
 
     # use shapes to create SVG
-    svg = SVG(SCRIPT_DIR + '/results/test-2.svg')
+    svg = SVG(svg_path)
     for shape in tangle_shapes:
         svg.add_shape(shape)
     svg.save_svg()
 
     # convert SVG to PNG
+    resolution: int = 1024
+    svg.save_png(svg_path, resolution)
 
     return 1
 

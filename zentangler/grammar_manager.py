@@ -8,6 +8,7 @@ from zentangler.operators.grouping_operator import UngroupOperator
 from zentangler.operators.color_operator import ColorOperator
 from zentangler.operators.line_width_operator import LineWidthOperator
 from zentangler.operators.place_operator import PlaceOperator
+from zentangler.operators.outline_operator import OutlineOperator
 from zentangler.operators.operator_parameter import ParameterDataType
 import json
 import random
@@ -104,6 +105,9 @@ class GrammarManager:
 
         elif operator_name == "place":
             operator = PlaceOperator(param_values)
+
+        elif operator_name == "outline":
+            operator = OutlineOperator(param_values)
 
         return operator
 

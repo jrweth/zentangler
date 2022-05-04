@@ -1,0 +1,187 @@
+{
+	"grammar_name" : "Test Grammar 4", 
+	"seed" : -1,
+	"rules" : [
+		{
+			"rule_name" : "reduce line width",
+			"matching_tags" : ["origin"],
+			"group_id" : 0,
+			"output_tags" : ["origin_skinny"],
+			"operator" : "line_width",
+			"parameters" : {
+				"line_width" : 0.003
+			}
+		},
+		{ 
+			"rule_name" : "main outline",
+			"matching_tags" : ["origin_skinny"],
+			"group_id" : 0,
+			"output_tags" : ["out", "in"],
+			"operator" : "outline",
+			"parameters" : {
+				"width" : 0.08
+			}
+		},
+		{ 
+			"rule_name" : "another outline",
+			"matching_tags" : ["in"],
+			"group_id" : 0,
+			"output_tags" : ["out_1", "in_1"],
+			"operator" : "outline",
+			"parameters" : {
+				"width" : 0.015
+			}
+		},
+		{ 
+			"rule_name" : "another outline 2",
+			"matching_tags" : ["in_1"],
+			"group_id" : 0,
+			"output_tags" : ["out_2", "in_2"],
+			"operator" : "outline",
+			"parameters" : {
+				"width" : 0.005
+			}
+		},
+		{
+			"rule_name" : "colorize",
+			"matching_tags" : ["out_2"],
+			"group_id" : 0,
+			"output_tags" : ["out_2_black"],
+			"operator" : "color",
+			"parameters" : {
+				"fill_colors" : [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
+				"fill_color_assignment": "Single color",
+				"line_color_assignment": "Single color"
+			}
+		},
+		{ 
+			"rule_name" : "split diagonal",
+			"matching_tags" : ["out"],
+			"group_id" : 0,
+			"output_tags" : ["out_lines"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.02,
+				"angle" : 45,
+				"line_style" : "JAGGED"
+			}
+		},
+		{ 
+			"rule_name" : "regroup",
+			"matching_tags" : ["out_lines"],
+			"group_id" : 0,
+			"output_tags" : [],
+			"operator" : "regroup",
+			"parameters" : {
+				"output_tags" : ["out_lines_a", "out_lines_b","out_lines_c"]
+			}
+		},
+		{
+			"rule_name" : "colorize",
+			"matching_tags" : ["out_lines_b"],
+			"group_id" : 0,
+			"output_tags" : ["out_lines_black"],
+			"operator" : "color",
+			"parameters" : {
+				"fill_colors" : [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
+				"fill_color_assignment": "Single color",
+				"line_color_assignment": "Single color"
+			}
+		},
+		{ 
+			"rule_name" : "cross split",
+			"matching_tags" : ["in_2"],
+			"group_id" : 0,
+			"output_tags" : ["a"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.1,
+				"cross_split" : true
+			}
+		},
+		{ 
+			"rule_name" : "regroup",
+			"matching_tags" : ["a"],
+			"group_id" : 0,
+			"output_tags" : [],
+			"operator" : "regroup",
+			"parameters" : {
+				"output_tags" : ["b","c"]
+			}
+		},
+		{ 
+			"rule_name" : "split diagonal",
+			"matching_tags" : ["b"],
+			"group_id" : 0,
+			"output_tags" : ["e"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.05,
+				"angle" : 0,
+				"cross_split" : true
+			}
+		},
+		{ 
+			"rule_name" : "regroup",
+			"matching_tags" : ["e"],
+			"group_id" : 0,
+			"output_tags" : [],
+			"operator" : "regroup",
+			"parameters" : {
+				"output_tags" : ["e_white","e_black"]
+			}
+		},
+		{
+			"rule_name" : "colorize",
+			"matching_tags" : ["e_black"],
+			"group_id" : 0,
+			"output_tags" : ["e_black_out"],
+			"operator" : "color",
+			"parameters" : {
+				"fill_colors" : [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
+				"fill_color_assignment": "Single color",
+				"line_color_assignment": "Single color"
+			}
+		},
+		{
+			"rule_name" : "circles",
+			"matching_tags" : ["c"],
+			"group_id" : 0,
+			"output_tags" : ["shapes", "remainder"],
+			"operator" : "place",
+			"parameters" : {
+				"shape_type": "circle",
+				"min_size": 0.03,
+				"max_size": 0.041,
+				"placement_type": "grid",
+				"min_distance": 0.005
+
+			}
+		},
+		{
+			"rule_name" : "colorize",
+			"matching_tags" : ["shapes"],
+			"group_id" : 0,
+			"output_tags" : ["black_circles"],
+			"operator" : "color",
+			"parameters" : {
+				"fill_colors" : [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
+				"fill_color_assignment": "Single color",
+				"line_color_assignment": "Single color"
+			}
+		},
+		{ 
+			"rule_name" : "split diagonal inside",
+			"matching_tags" : ["remainder"],
+			"group_id" : 0,
+			"output_tags" : ["cuved"],
+			"operator" : "split",
+			"parameters" : {
+				"width" : 0.02,
+				"line_style" : "CURVED",
+				"line_style_scale_x": 0.1,
+				"line_style_scale_y": 0.025
+			}
+		}
+	]
+}
