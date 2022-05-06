@@ -18,6 +18,16 @@ BASE_GRAMMARS = [
         "name": "Base Grammar 3",
         "path": SCRIPT_DIR + "/grammars/test_grammar_3.json",
         "icon_path": SCRIPT_DIR + "/grammars/test_grammar_3.png",
+    },
+    {
+        "name": "Base Grammar 4",
+        "path": SCRIPT_DIR + "/grammars/test_grammar_4.json",
+        "icon_path": SCRIPT_DIR + "/grammars/test_grammar_4.png",
+    },
+    {
+        "name": "Base Grammar 5",
+        "path": SCRIPT_DIR + "/grammars/test_grammar_5.json",
+        "icon_path": SCRIPT_DIR + "/grammars/test_grammar_5.png",
     }
 ]
 

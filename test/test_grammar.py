@@ -49,9 +49,37 @@ class TestGrammar(unittest.TestCase):
         tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar3.svg')
         tangle.create_last_expansion_png(os.path.dirname(SCRIPT_DIR) + '/zentangler/grammars/test_grammar_3.png', 100)
 
-        # self.assertEqual(len(grammar.rules), 5, "There are 5 grammar rules")
-        # self.assertEqual(len(tangle.grammar.rules), 5, "number of grammar rules is 5")
-        # self.assertEqual(len(tangle.get_last_expansion_shapes()), 291)
+        self.assertEqual(len(grammar.rules), 9, "There are 9 grammar rules")
+        self.assertEqual(len(tangle.grammar.rules), 9, "number of grammar rules is 9")
+        self.assertEqual(len(tangle.get_last_expansion_shapes()), 138)
+
+    def test_grammar_4(self):
+        gm = GrammarManager()
+        grammar = gm.get_grammar((os.path.dirname(SCRIPT_DIR) + "/zentangler/grammars/test_grammar_4.json"))
+
+        tangle = Tangle(grammar=grammar, init_shapes=[SQUARE_SHAPE])
+
+        tangle.create()
+        tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar4.svg')
+        tangle.create_last_expansion_png(os.path.dirname(SCRIPT_DIR) + '/zentangler/grammars/test_grammar_4.png', 100)
+
+        self.assertEqual(len(grammar.rules), 16, "There are 16 grammar rules")
+        self.assertEqual(len(tangle.grammar.rules), 16, "number of grammar rules is 16")
+        self.assertEqual(len(tangle.get_last_expansion_shapes()), 451)
+
+    def test_grammar_5(self):
+        gm = GrammarManager()
+        grammar = gm.get_grammar((os.path.dirname(SCRIPT_DIR) + "/zentangler/grammars/test_grammar_5.json"))
+
+        tangle = Tangle(grammar=grammar, init_shapes=[SQUARE_SHAPE])
+
+        tangle.create()
+        tangle.create_last_expansion_svg(SCRIPT_DIR + '/results/test-grammar5.svg')
+        tangle.create_last_expansion_png(os.path.dirname(SCRIPT_DIR) + '/zentangler/grammars/test_grammar_5.png', 100)
+
+        self.assertEqual(len(grammar.rules), 18, "There are 18 grammar rules")
+        self.assertEqual(len(tangle.grammar.rules), 18, "number of grammar rules is 18")
+        self.assertEqual(len(tangle.get_last_expansion_shapes()), 118)
 
     def test_grammar_random(self):
         gm = GrammarManager()
