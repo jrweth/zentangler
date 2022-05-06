@@ -1,7 +1,6 @@
 import pymel.core as pm
 from pymel.core.windows import image
-import os
-import sys
+import re
 
 from zentangler.tangle import Tangle
 from zentangler_maya.tangle_creation import create_uv_map_tangle, create_silhouette_tangle
@@ -109,14 +108,17 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, tangle_layout, gr
 
         return
 
-    override_png_filename = TangleEditor.get_img_folder_from_name(selectedObj.name())
-    override_png_filename += "/tangle.png"
     multi_uv_shells = pm.checkBox(uv_shells, query=True, value=True)
+
+    # create tangle name from object name but remove non-letters and numbers
+    tangle_name = re.sub(r'[^a-zA-Z0-9]', '_', selectedObj.name())
+    override_png_filename = TangleEditor.get_png_filename_from_name(tangle_name)
+
     if uv_type_radios.getSelect() == 1:
         tangle_info = create_uv_map_tangle(selectedObj,
                                            grammar_filename=grammar_filename,
                                            override_png_filename=override_png_filename,
-                                           tangle_name=selectedObj.name(),
+                                           tangle_name=tangle_name,
                                            multi_uv_shells=multi_uv_shells
                                            )
     elif uv_type_radios.getSelect() == 2:
@@ -124,7 +126,7 @@ def create_tangles_from_selected(base_grammar, uv_type_radios, tangle_layout, gr
         tangle_info = create_silhouette_tangle(selectedObj,
                                            grammar_filename=grammar_filename,
                                            override_png_filename=override_png_filename,
-                                           tangle_name=selectedObj.name(),
+                                           tangle_name=tangle_name,
                                            multi_uv_shells=multi_uv_shells
                                            )
 

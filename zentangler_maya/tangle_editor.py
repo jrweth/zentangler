@@ -99,7 +99,10 @@ class TangleEditor:
         return self.get_img_folder() + "/tangle_thumbnail.png"
 
     def get_png_filename(self):
-        return self.get_img_folder() + "/tangle.png"
+        return TangleEditor.get_img_folder_from_name(self.name)
+
+    def get_png_filename_from_name(name: str):
+        return TangleEditor.get_img_folder_from_name(name) + "/tangle.png"
 
     def generate_thumbnail(self):
         # if we haven't run the tangle yet then do so
