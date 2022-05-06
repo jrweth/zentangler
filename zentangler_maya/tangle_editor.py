@@ -1,5 +1,7 @@
 from zentangler.tangle import Tangle
 from zentangler_maya.rule_editor import RuleEditor
+from zentangler.grammar import BASE_GRAMMARS
+from zentangler.grammar_manager import GrammarManager
 import pymel.core as pm
 import os
 
@@ -41,8 +43,26 @@ class TangleEditor:
         self.set_message("")
         pm.refresh()
 
+    def reset_grammar(self):
+        for grammar_def in BASE_GRAMMARS:
+            if grammar_def["name"] == self.grammar_picker.getValue():
+                grammar_filename = grammar_def["path"]
+                grammar_mgr = GrammarManager()
+                self.tangle.grammar = grammar_mgr.get_grammar(grammar_filename)
+                self.refresh_tangle()
+                self.create_ui_elements()
+
     def create_ui_elements(self):
+        for child in self.container_layout.children():
+            pm.deleteUI(child)
         with self.container_layout:
+            with pm.rowColumnLayout():
+                with pm.rowLayout(numberOfColumns=2, columnWidth2=(250, 150)):
+                    self.grammar_picker = pm.optionMenu(label='reset to grammar: ')
+                    for grammar in BASE_GRAMMARS:
+                        pm.menuItem(label=grammar["name"])
+                    pm.button("reset", command=pm.Callback(self.reset_grammar))
+
             self.tangle_thumbnail = pm.image(
                 image=self.get_thumbnail_filename(),
                 backgroundColor=[0.5, 0.5, 0.5],
