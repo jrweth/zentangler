@@ -201,9 +201,12 @@ def create_tangle_window():
     pm.setParent('..')
     pm.showWindow(window)
 
+def remove_zentangler_menu():
+    if pm.menu('ZenTanglerMenu', exists=True):
+        pm.deleteUI('ZenTanglerMenu')
 
 def add_zentangler_menu():
-    if pm.menu('ZenTanglerMenu', exists=True): pm.deleteUI('ZenTanglerMenu')
+    remove_zentangler_menu()
 
     g_main_window = pm.melGlobals['gMainWindow']
 
@@ -218,5 +221,3 @@ def add_zentangler_menu():
 
     global tangle_already_created
     tangle_already_created = False
-
-add_zentangler_menu()
