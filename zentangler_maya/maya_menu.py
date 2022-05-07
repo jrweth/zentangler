@@ -1,6 +1,7 @@
 import pymel.core as pm
 from pymel.core.windows import image
 import re
+from zentangler_maya.config_editor import ConfigEditor
 
 from zentangler.tangle import Tangle
 from zentangler_maya.tangle_creation import create_uv_map_tangle, create_silhouette_tangle
@@ -203,6 +204,10 @@ def create_tangle_window():
     pm.setParent('..')
     pm.showWindow(window)
 
+def create_config_window():
+    print("creating config window")
+    ConfigEditor()
+
 def remove_zentangler_menu():
     if pm.menu('ZenTanglerMenu', exists=True):
         pm.deleteUI('ZenTanglerMenu')
@@ -220,6 +225,7 @@ def add_zentangler_menu():
                    )
 
     pm.menuItem(l='Create', p=menu, c=pm.Callback(create_tangle_window))
+    pm.menuItem(l='Set Configuration', p=menu, c=pm.Callback(create_config_window))
 
     global tangle_already_created
     tangle_already_created = False

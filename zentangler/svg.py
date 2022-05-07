@@ -1,8 +1,11 @@
+import os.path
+
 import svgwrite
 from math import floor
 from svgwrite import Drawing
 from svgwrite.path import Path
 from zentangler.shape import Shape
+from zentangler.config_manager import ConfigManager
 import subprocess
 
 class SVG:
@@ -56,31 +59,21 @@ class SVG:
 
     def save_png(self, png_filename, resolution: int = 1024):
         self.save_svg()
-        inkscape_path = '/opt/local/bin/inkscape'
-        # inkscape_path = '/usr/local/bin/inkscape'
-        #
-        # # this wasn't working when calling from maya so
-        # # try:
-        # #     inkscape_path = subprocess.check_output(["which", "inkscape"]).strip()
-        # # except subprocess.CalledProcessError:
-        # #     print("ERROR: You need inkscape installed to use this script.")
-        # #     exit(1)
-        #
-        # args = [
-        #     inkscape_path,
-        #     "--without-gui",
-        #     "-f", self.filename,
-        #     "--export-area-page",
-        #     "-w", str(resolution),
-        #     "-h", str(resolution),
-        #     "--export-png=" + png_filename
-        # ]
-        args = [
-            inkscape_path,
-            self.filename,
-            "--export-area-page",
-            "-w", str(resolution),
-            "-h", str(resolution),
-            "--export-png=" + png_filename
-        ]
-        subprocess.run(args)
+
+        # get the inkscape executable from the config manager
+        if not ConfigManager.config_loaded:
+            ConfigManager.load_config_file()
+        inkscape_path = ConfigManager.inkscape_executable
+
+        if inkscape_path is None or not os.path.exists(inkscape_path):
+            print("Inkscape path is not set in Zentangler configuration")
+        else:
+            args = [
+                inkscape_path,
+                self.filename,
+                "--export-area-page",
+                "-w", str(resolution),
+                "-h", str(resolution),
+                "--export-png=" + png_filename
+            ]
+            subprocess.run(args)
