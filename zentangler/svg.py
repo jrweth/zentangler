@@ -1,6 +1,6 @@
 import os.path
-
 import svgwrite
+import platform
 from math import floor
 from svgwrite import Drawing
 from svgwrite.path import Path
@@ -68,18 +68,28 @@ class SVG:
         if inkscape_path is None or not os.path.exists(inkscape_path):
             print("Inkscape path is not set in Zentangler configuration")
         else:
-            cmd = ' '.join((
-                        inkscape_path,
-                        self.filename,
-                        "--export-width=" + str(resolution),
-                        "--export-height=" + str(resolution),
-                        "--export-type=\"png\"",
-                        "--export-filename=" + png_filename))
-            sb  = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-            (output, err) = sb.communicate()
-            exit_code = sb.wait()
-            if not exit_code == 1:
-                print(err)
-
+            if platform.system() == 'Windows':
+                cmd = ' '.join((
+                            inkscape_path,
+                            self.filename,
+                            "--export-width=" + str(resolution),
+                            "--export-height=" + str(resolution),
+                            "--export-type=\"png\"",
+                            "--export-filename=" + png_filename))
+                sb  = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+                (output, err) = sb.communicate()
+                exit_code = sb.wait()
+                if not exit_code == 1:
+                    print(err)
+            else:
+                args = [
+                    inkscape_path,
+                    self.filename,
+                    "--export-area-page",
+                    "-w", str(resolution),
+                    "-h", str(resolution),
+                    "--export-png=" + png_filename
+                ]
+                subprocess.run(args)
 
 
