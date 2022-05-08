@@ -11,16 +11,18 @@ from test_polygon import HOLED_POLYGON
 
 class TestSVG(unittest.TestCase):
     def testSVG(self):
-        svg = SVG(SCRIPT_DIR + '/results/test-svg.svg')
+        s = os.path.sep
+        svg = SVG(SCRIPT_DIR + s + 'results' + s + 'test-svg.svg')
         shape = Shape(geometry=HOLED_POLYGON)
         svg.add_shape(shape)
         svg.save_svg()
 
     def testSVGtoPNG(self):
-        svg = SVG(SCRIPT_DIR + '/results/test-svg.svg')
+        s = os.path.sep
+        svg = SVG(SCRIPT_DIR + s + 'results' + s + 'test-svg.svg')
         shape = Shape(geometry=HOLED_POLYGON)
         svg.add_shape(shape)
-        svg.save_png('results/test-svg-png.png')
+        svg.save_png('"' + SCRIPT_DIR + s + 'results' + s + 'test-svg-png.png"')
 
 if __name__ == '__main__':
     unittest.main()

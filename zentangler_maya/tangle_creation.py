@@ -68,7 +68,7 @@ def create_silhouette_tangle(obj, grammar_filename, override_png_filename=None, 
     """
     shape_gen = UVShapeGenerator(obj)
     if not multi_uv_shells:
-        initial_shapes = [shape_gen.get_current_uv_shape()]
+        initial_shapes = [shape_gen.get_silhouette_shape()]
         if initial_shapes is not None:
             return create_tangle(obj, initial_shapes, grammar_filename, override_png_filename, assign_texture=True, tangle_name=tangle_name)
     else:
@@ -79,7 +79,7 @@ def create_silhouette_tangle(obj, grammar_filename, override_png_filename=None, 
             multi_tangle.create_all()
             texture_gen = TextureGenerator(obj,
                                            multi_tangle.get_last_expansion_shapes(),
-                                           TangleEditor.get_img_folder_from_name(tangle_name)) + "tangle.png"
+                                           TangleEditor.get_img_folder_from_name(tangle_name) + "/tangle.png")
             texture_gen.assign_texture()
             return {"tangle": multi_tangle}
 

@@ -40,12 +40,12 @@ class TextureGenerator:
                 return self.override_png_filename.replace('.png', '.svg').replace('.PNG', '.SVG')
 
         # if we aren't overriding the filename then set the default texture file name
-        folder_path = pm.workspace.getPath() + "/zentangler"
+        folder_path = pm.workspace.getPath() + os.path.sep + "zentangler"
 
         # if no zentangler folder exists for this project then make one
         if not os.path.isdir(folder_path):
             os.mkdir(folder_path)
-        return folder_path + "/zentangler_" + self.obj.name() + "." + filetype
+        return folder_path + os.path.sep + "zentangler_" + self.obj.name() + "." + filetype
 
     def create_texture_file(self, resolution: int = 1024):
         """

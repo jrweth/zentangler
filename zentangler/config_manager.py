@@ -78,7 +78,8 @@ class ConfigManager:
     @staticmethod
     def get_default_config_filename():
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-        return SCRIPT_DIR + "/config/zentangler_config.json"
+        return SCRIPT_DIR + os.path.sep + "config" + os.path.sep + "zentangler_config.json"
+
 
 
     @staticmethod

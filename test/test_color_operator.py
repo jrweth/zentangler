@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(SCRIPT_DIR) + '/zentangler')
+sys.path.append(os.path.dirname(SCRIPT_DIR) + os.path.sep + 'zentangler')
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from zentangler.svg import SVG
@@ -28,7 +28,7 @@ class TestColorOperator(unittest.TestCase):
 
         new_shapes: list[Shape] = color_operator.execute([shape], ['colored'])
 
-        svg = SVG(SCRIPT_DIR + '/results/test-color-operator-single.svg')
+        svg = SVG(SCRIPT_DIR + os.path.sep + 'results' + os.path.sep + 'test-color-operator-single.svg')
         for shape in new_shapes:
             svg.add_shape(shape)
         svg.save_svg()
@@ -60,7 +60,7 @@ class TestColorOperator(unittest.TestCase):
 
         new_shapes: list[Shape] = color_operator.execute(split_shapes, ['colored'])
 
-        svg = SVG(SCRIPT_DIR + '/results/test-color-operator-cycle.svg')
+        svg = SVG(SCRIPT_DIR + os.path.sep + 'results' + os.path.sep + 'test-color-operator-cycle.svg')
         for shape in new_shapes:
             svg.add_shape(shape)
         svg.save_svg()
@@ -92,7 +92,7 @@ class TestColorOperator(unittest.TestCase):
 
         new_shapes: list[Shape] = color_operator.execute(split_shapes, ['colored'])
 
-        svg = SVG(SCRIPT_DIR + '/results/test-color-operator-random.svg')
+        svg = SVG(SCRIPT_DIR + os.path.sep + 'results' + os.path.sep + 'test-color-operator-random.svg')
         for shape in new_shapes:
             svg.add_shape(shape)
         svg.save_svg()
@@ -110,7 +110,7 @@ class TestColorOperator(unittest.TestCase):
             OperatorParameterValue("fill_color_assignment", "cycle colors")
         ]
         operator = ColorOperator(param_values)
-        png_filename = SCRIPT_DIR + '/results/test-color-operator-thumbnail.png'
+        png_filename = SCRIPT_DIR + os.path.sep + 'results' + os.path.sep + 'test-color-operator-thumbnail.png'
         operator.create_thumbnail(png_filename)
 
 if __name__ == '__main__':

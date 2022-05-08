@@ -1,3 +1,4 @@
+import os
 import pymel.core as pm
 from zentangler.operators.operator_parameter import OperatorParameterValue as OPV
 from zentangler.operators.operator_parameter import ParameterDataType
@@ -101,5 +102,5 @@ class RuleEditor:
                              changeCommand=pm.CallbackWithArgs(RuleEditor.param_value_changed, self, param.name))
 
     def get_thumbnail_filename(self):
-        return self.tangle_editor.get_img_folder() + "/rule_" + str(self.rule_index) + "thumbnail.png"
+        return self.tangle_editor.get_img_folder() + os.path.sep + "rule_" + str(self.rule_index) + "thumbnail.png"
 

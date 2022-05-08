@@ -99,7 +99,7 @@ class TangleEditor:
         return self.get_img_folder() + "/tangle_thumbnail.png"
 
     def get_png_filename(self):
-        return TangleEditor.get_img_folder_from_name(self.name)
+        return TangleEditor.get_png_filename_from_name(self.tangle.name)
 
     def get_png_filename_from_name(name: str):
         return TangleEditor.get_img_folder_from_name(name) + "/tangle.png"
