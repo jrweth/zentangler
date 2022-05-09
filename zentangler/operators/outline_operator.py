@@ -79,6 +79,16 @@ class OutlineOperator(AbstractOperator):
                 #get the solution which returns the new offset borders
                 solution = offsetter.Execute(-self.get_parameter_value("width") * OutlineOperator.precision)
 
+                # if no solution is found assume all is in the outline
+                if len(solution) == 0:
+                    outerShape: Shape = shape.clone()
+                    outerShape.tag = self.output_tags[0]
+                    outerShape.group_id = 0
+                    outerShape.shape_id = self.tag1_shape_id
+                    self.tag1_shape_id = self.tag1_shape_id + 1
+                    self.new_shapes.append(outerShape)
+                    return
+
                 # get the exterior polygon and make the new hole the outermost outline (solution 0)
                 outline1 = Polygon(polygon.exterior.coords, [OutlineOperator.polygon_int_pts_to_float(solution[0])])
                 #remove all the original holes as well in case they end up in our border
@@ -86,7 +96,7 @@ class OutlineOperator(AbstractOperator):
                     outline1 = outline1.difference(Polygon(orig_hole))
 
                 # create the outer outline shape
-                outerShape: Shape = copy.deepcopy(shape)
+                outerShape: Shape = shape.clone()
                 outerShape.tag = self.output_tags[0]
                 outerShape.geometry = MultiPolygon([outline1])
                 outerShape.group_id = 0
@@ -126,7 +136,7 @@ class OutlineOperator(AbstractOperator):
                     self.new_shapes.append(interior_outline_shape)
 
             except Exception as error:
-                print ("error in getting outline", error)
+                #print ("error in getting outline", error)
                 remainder_shape: Shape = shape.clone()
                 remainder_shape.tag = self.output_tags[1]
                 remainder_shape.parent_shape = shape

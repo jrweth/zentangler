@@ -75,9 +75,9 @@ class SplitOperator(AbstractOperator):
     num_output_tags: int = 1
     parameters = [
         OperatorParameter(name="width", data_type=ParameterDataType.FLOAT, default=0.1,
-                          description="width of the split", range_start=0.01, range_end=0.8),
+                          description="width of the split", range_start=0.005, range_end=0.8),
         OperatorParameter(name="angle", data_type=ParameterDataType.FLOAT, default=0.0,
-                          description="angle of the split lines in degrees (-90 to 90)", range_start=-90, range_end=90),
+                          description="angle of the split lines in degrees (-90 to 90)", range_start=-90t range_end=90),
         OperatorParameter(name="cross_split", data_type=ParameterDataType.BOOL, default=False,
                           description="if the split should be split along both x and y axis"),
         OperatorParameter(name="line_style", data_type=ParameterDataType.STRING, default="STRAIGHT",

@@ -202,7 +202,7 @@ class PlaceOperator(AbstractOperator):
                           data_type=ParameterDataType.FLOAT,
                           default=0.1,
                           description="the minimum size that the shape can be",
-                          range_start=0.005, range_end=0.5
+                          range_start=0.01, range_end=0.5
                           ),
         OperatorParameter(name="max_size",
                           data_type=ParameterDataType.FLOAT,
@@ -214,7 +214,7 @@ class PlaceOperator(AbstractOperator):
                           data_type=ParameterDataType.FLOAT,
                           default=0.1,
                           description="the minimum distance between shapes",
-                          range_start=0.005, range_end=1.0
+                          range_start=0.01, range_end=1.0
                           ),
         OperatorParameter(name="rotation",
                           data_type=ParameterDataType.INT,
@@ -433,7 +433,7 @@ class PlaceOperator(AbstractOperator):
 
         if num_shapes > 8000:
 
-            points = [(0.45, 0.45), (0.45, 0.55), (0.55, 0.55), (0.55, 0.45)]
+            points = [(0.4, 0.4), (0.4, 0.6), (0.6, 0.6), (0.6, 0.4)]
             outer_points = [(0, 0), (0, 1), (1, 1), (1, 0)]
             m_poly = MultiPolygon([Polygon(points)])
             shapes = [Shape(geometry=m_poly, shape_id=0)]
